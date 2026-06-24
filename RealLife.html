@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Form</title>
+  <style>
+    /* Clean Page Background */
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #f0f9ff;
+      /* Ultra-light sky blue */
+      color: #334155;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Minimalist Form Card */
+    form {
+      background: #ffffff;
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+      /* Perfectly sized for 4 fields */
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e0f2fe;
+    }
+
+    h2 {
+      margin: 0 0 8px 0;
+      color: #0369a1;
+      /* Deep ocean blue */
+      text-align: center;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    p.subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #64748b;
+      margin: 0 0 20px 0;
+    }
+
+    /* Input Fields */
+    label {
+      display: block;
+      margin-top: 14px;
+      font-weight: 500;
+      font-size: 13px;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background-color: #f8fafc;
+      box-sizing: border-box;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    /* Focus State */
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+
+    /* Vibrant Blue Action Button */
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 12px;
+      background: #0284c7;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #0369a1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <form id="contactForm">
+    <h2>Contact Us</h2>
+    <p class="subtitle">Drop us a line and we will get back to you.</p>
+
+    <!-- Input 1: Name -->
+    <label for="name">Full Name</label>
+    <input type="text" name="name" id="name" placeholder="Timothy" required>
+
+    <!-- Input 2: Email -->
+    <label for="email">Email Address</label>
+    <input type="text" name="email" id="email" placeholder="timothy@example.com" required>
+
+    <!-- Input 3: Phone -->
+    <label for="phone">Phone Number</label>
+    <input type="tel" name="phone" id="phone" placeholder="1234">
+
+    <!-- Input 4: Message -->
+    <label for="message">Message</label>
+    <textarea name="message" id="message" rows="3" placeholder="How can we help you?" required></textarea>
+
+    <button type="submit">Send Message</button>
+  </form>
+
+  <script>
+    // Replace with your Google Apps Script Web App URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbydq0OZxLIDMOZWoEMG7m1zzCwTl0JOHKHNPUYDvqAG67QhHxLW5silUkgA5UUAGt20QA/exec';
+    const form = document.getElementById('contactForm');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const btn = form.querySelector('button');
+      btn.innerText = 'Sending...';
+      btn.disabled = true;
+
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(response => {
+          alert("Message sent successfully!");
+          form.reset();
+          btn.innerText = 'Send Message';
+          btn.disabled = false;
+        })
+        .catch(error => {
+          alert('Error! ' + error.message);
+          btn.innerText = 'Send Message';
+          btn.disabled = false;
+        });
+    });
+  </script>
+
+</body>
+
+</html>
