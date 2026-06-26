@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f3f5;
+            /* Light cool gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 35px 40px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            /* Subtle cool gray border */
+            box-shadow: 0 10px 25px rgba(148, 163, 184, 0.15);
+            /* Soft gray shadow */
+            text-align: center;
+            width: 320px;
+        }
+
+        h2 {
+            color: #1e293b;
+            /* Dark slate gray */
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 24px;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border: 1px solid #cbd5e1;
+            /* Medium cool gray border */
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f8fafc;
+            /* Very light tint inside inputs */
+            color: #334155;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input[type="number"]:focus {
+            border-color: #94a3b8;
+            /* Darker gray on focus */
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1);
+        }
+
+        /* Removes default number spin arrows for a cleaner look */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        button {
+            background-color: #64748b;
+            /* Matte cool gray */
+            color: #ffffff;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background-color: #475569;
+            /* Darker cool gray */
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        h3 {
+            color: #334155;
+            margin-top: 25px;
+            margin-bottom: 0;
+            font-size: 18px;
+            font-weight: 600;
+            min-height: 24px;
+            /* Keeps layout stable before result populates */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Simple Calculator</h2>
+
+        <input type="number" id="num1" placeholder="Enter number 1">
+        <input type="number" id="num2" placeholder="Enter number 2">
+
+        <div class="button-grid">
+            <button onclick="add()">Add</button>
+            <button onclick="subtract()">Subtract</button>
+            <button onclick="multiply()">Multiply</button>
+            <button onclick="divide()">Divide</button>
+        </div>
+
+        <h3 id="result"></h3>
+    </div>
+
+    <script>
+        function getValues() {
+            var n1 = parseFloat(document.getElementById("num1").value);
+            var n2 = parseFloat(document.getElementById("num2").value);
+            return { num1: n1, num2: n2 };
+        }
+
+        function displayResult(text) {
+            document.getElementById("result").innerText = text;
+        }
+
+        function add() {
+            var vals = getValues();
+            if (isNaN(vals.num1) || !isNaN(vals.num2) === false) return displayResult("Please enter valid numbers");
+            displayResult("Result: " + (vals.num1 + vals.num2));
+        }
+
+        function subtract() {
+            var vals = getValues();
+            if (isNaN(vals.num1) || isNaN(vals.num2)) return displayResult("Please enter valid numbers");
+            displayResult("Result: " + (vals.num1 - vals.num2));
+        }
+
+        function multiply() {
+            var vals = getValues();
+            if (isNaN(vals.num1) || isNaN(vals.num2)) return displayResult("Please enter valid numbers");
+            displayResult("Result: " + (vals.num1 * vals.num2));
+        }
+
+        function divide() {
+            var vals = getValues();
+            if (isNaN(vals.num1) || isNaN(vals.num2)) return displayResult("Please enter valid numbers");
+            let result = vals.num2 === 0 ? "Cannot divide by zero" : (vals.num1 / vals.num2).toFixed(2);
+            displayResult("Result: " + result);
+        }
+    </script>
+</body>
+
+</html>

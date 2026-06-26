@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Cool Gray Theme Customizations */
+        body {
+            background-color: #f1f3f5;
+            color: #343a40;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .table {
+            --bs-table-bg: #ffffff;
+            --bs-table-border-color: #e9ecef;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .btn-cool-gray {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
+
+        .btn-cool-gray:hover {
+            background-color: #495057;
+            color: #ffffff;
+        }
+
+        /* Fullscreen Modal Overlay */
+        #flashcardModal {
+            background-color: #212529;
+        }
+
+        /* 3D Flashcard Flip Effect */
+        .flashcard-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 550px;
+            height: 350px;
+            margin: 0 auto;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flashcard-container.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .flashcard-front {
+            background-color: #343a40;
+            color: #f8f9fa;
+            border: 1px solid #495057;
+        }
+
+        .flashcard-back {
+            background-color: #495057;
+            color: #f8f9fa;
+            transform: rotateY(180deg);
+            border: 1px solid #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container my-5" style="max-width: 900px;">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold text-secondary">Flashcard</h1>
+            <p class="text-muted">Input your questions and answers below, then hit start to study.</p>
+        </div>
+
+        <div class="card p-4">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 45%;">Question / Term</th>
+                            <th style="width: 45%;">Answer / Definition</th>
+                            <th style="width: 10%;" class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td><input type="text" class="form-control question-input"
+                                    placeholder="e.g., What is the capital of France?"></td>
+                            <td><input type="text" class="form-control answer-input" placeholder="e.g., Paris"></td>
+                            <td class="text-center">
+                                <button class="btn btn-outline-danger btn-sm delete-row-btn" onclick="deleteRow(this)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between mt-3">
+                <button class="btn btn-outline-secondary" id="addRowBtn">
+                    <i class="bi bi-plus-lg"></i> Add Row
+                </button>
+                <button class="btn btn-cool-gray px-4 fw-semibold" id="startBtn">
+                    <i class="bi bi-play-fill"></i> Start Flashcards
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="flashcardModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+        aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content border-0 bg-transparent">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <div class="text-light">
+                        <span class="fs-5 fw-semibold" id="progressText">Card 1 of 1</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+                        id="closeModalBtn"></button>
+                </div>
+
+                <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                    <div class="flashcard-container mb-4" id="flashcardContainer">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="badge bg-secondary mb-3">QUESTION</span>
+                                <h3 id="cardQuestion" class="fw-normal m-0"></h3>
+                                <small class="text-muted mt-4"><i class="bi bi-arrow-repeat"></i> Click to flip</small>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="badge bg-light text-dark mb-3">ANSWER</span>
+                                <h3 id="cardAnswer" class="fw-normal m-0"></h3>
+                                <small class="text-light-50 mt-4"><i class="bi bi-arrow-repeat"></i> Click to flip
+                                    back</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 align-items-center mt-2">
+                        <button class="btn btn-outline-light px-3" id="prevBtn">
+                            <i class="bi bi-arrow-left"></i> Prev
+                        </button>
+                        <button class="btn btn-light px-4 fw-semibold" id="nextBtn">
+                            Next <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // State Tracking
+        let deck = [];
+        let currentCardIndex = 0;
+
+        // DOM Elements
+        const tableBody = document.getElementById('tableBody');
+        const addRowBtn = document.getElementById('addRowBtn');
+        const startBtn = document.getElementById('startBtn');
+        const flashcardContainer = document.getElementById('flashcardContainer');
+        const cardQuestion = document.getElementById('cardQuestion');
+        const cardAnswer = document.getElementById('cardAnswer');
+        const progressText = document.getElementById('progressText');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        // Initialize Bootstrap Modal
+        const bsModal = new bootstrap.Modal(document.getElementById('flashcardModal'));
+
+        // --- Dynamic Table Management ---
+
+        // Add new empty row
+        addRowBtn.addEventListener('click', () => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td><input type="text" class="form-control question-input" placeholder="Enter question"></td>
+            <td><input type="text" class="form-control answer-input" placeholder="Enter answer"></td>
+            <td class="text-center">
+                <button class="btn btn-outline-danger btn-sm delete-row-btn" onclick="deleteRow(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+            tableBody.appendChild(row);
+        });
+
+        // Delete table row function
+        function deleteRow(button) {
+            const rowCount = tableBody.rows.length;
+            if (rowCount > 1) {
+                button.closest('tr').remove();
+            } else {
+                alert("You need at least one row to make a flashcard!");
+            }
+        }
+
+        // --- Flashcard Logic ---
+
+        // Build the data array and open modal
+        startBtn.addEventListener('click', () => {
+            deck = [];
+            const rows = tableBody.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const qVal = row.querySelector('.question-input').value.trim();
+                const aVal = row.querySelector('.answer-input').value.trim();
+
+                if (qVal && aVal) {
+                    deck.push({ question: qVal, answer: aVal });
+                }
+            });
+
+            if (deck.length === 0) {
+                alert('Please fill out at least one Question and Answer pair.');
+                return;
+            }
+
+            // Shuffle Deck for better learning
+            deck.sort(() => Math.random() - 0.5);
+
+            // Reset state and open fullscreen overlay
+            currentCardIndex = 0;
+            renderCard();
+            bsModal.show();
+        });
+
+        // Flip card trigger
+        flashcardContainer.addEventListener('click', () => {
+            flashcardContainer.classList.toggle('flipped');
+        });
+
+        // Render current card details
+        function renderCard() {
+            // Reset card flip to front side
+            flashcardContainer.classList.remove('flipped');
+
+            // Wait briefly for flip transition to reset if changing active card
+            setTimeout(() => {
+                const currentCard = deck[currentCardIndex];
+                cardQuestion.textContent = currentCard.question;
+                cardAnswer.textContent = currentCard.answer;
+                progressText.textContent = `Card ${currentCardIndex + 1} of ${deck.length}`;
+
+                // Toggle navigation button visibility states
+                prevBtn.disabled = currentCardIndex === 0;
+                nextBtn.textContent = currentCardIndex === deck.length - 1 ? 'Finish' : 'Next →';
+                if (currentCardIndex === deck.length - 1) {
+                    nextBtn.classList.replace('btn-light', 'btn-success');
+                } else {
+                    nextBtn.classList.replace('btn-success', 'btn-light');
+                }
+            }, 150);
+        }
+
+        // Navigation: Next / Finish Button
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Stop card from flipping when clicking nav buttons
+            if (currentCardIndex < deck.length - 1) {
+                currentCardIndex++;
+                renderCard();
+            } else {
+                bsModal.hide();
+                alert("Great job! You've completed your deck study session.");
+            }
+        });
+
+        // Navigation: Prev Button
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                renderCard();
+            }
+        });
+    </script>
+</body>
+
+</html>
