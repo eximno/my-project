@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>EGP ATM Machine </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cinzel', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a1c23 0%, #0f1015 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 20px;
+            min-height: 100vh;
+        }
+
+        .atm-container {
+            width: 700px;
+            background: linear-gradient(145deg, #1e2029, #13151b);
+            padding: 45px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .user-profile {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .user-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #d4af37;
+            opacity: 0.7;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .user-name {
+            font-size: 20px;
+            color: #ffffff;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #d4af37, #f3e5ab, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #balance {
+            font-size: 36px;
+            font-weight: 300;
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            color: #ffffff;
+            text-align: center;
+            outline: none;
+            transition: all 0.4s ease;
+            letter-spacing: 1px;
+        }
+
+        input:focus {
+            border-color: #d4af37;
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+
+        /* Styling for number input spin buttons */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 16px 20px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            background: transparent;
+            color: #d4af37;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        button:hover {
+            background: #d4af37;
+            color: #13151b;
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.15);
+            border-color: #d4af37;
+        }
+
+        .buttons button:nth-child(1),
+        .buttons button:nth-child(2),
+        .buttons button:nth-child(3) {
+            background: transparent;
+        }
+
+        .buttons button:nth-child(1):hover,
+        .buttons button:nth-child(2):hover,
+        .buttons button:nth-child(3):hover {
+            background: #d4af37;
+            color: #13151b;
+        }
+
+        #message {
+            margin-top: 10px;
+            padding: 18px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 12px;
+            font-size: 14px;
+            color: #f3e5ab;
+            text-align: center;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+        }
+
+        hr {
+            margin: 40px 0 30px 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0), rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0));
+        }
+
+        h3 {
+            margin-bottom: 20px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        table th {
+            background: transparent;
+            color: #d4af37;
+            padding: 14px 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 14px 10px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 300;
+        }
+
+        table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        table tbody tr:nth-child(even) {
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="atm-container">
+        <h2>ATM Machine</h2>
+        
+        <div class="user-profile">
+            <span class="user-label">Preferred Client</span>
+            <span class="user-name">Timothy Lawrence A. Delmoro</span>
+        </div>
+
+        <p id="balance">Balance: ₱0.00</p>
+        <input type="number" id="amount" placeholder="Enter Amount">
+        <div class="buttons">
+            <button onclick="checkBalance()">Check Balance</button>
+            <button onclick="deposit()">Deposit</button>
+            <button onclick="withdraw()">Withdraw</button>
+        </div>
+        <div id="message">
+            Welcome! Please choose a transaction.
+        </div>
+        <hr>
+        <h3>Transaction Summary (Audit Log)</h3>
+        <table id="logTable">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Date & Time</th>
+                    <th>Transaction</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        let balance = 0;
+        let transactionLog = [];
+        /* CHECK BALANCE */
+        function checkBalance() {
+            showMessage(`Your current balance is ₱${balance.toFixed(2)}`);
+            addTransaction("Balance Inquiry", 0);
+        }
+        /* DEPOSIT */
+        function deposit() {
+            let amount = getAmount();
+            if (isNaN(amount) || amount <= 0) {
+                showMessage("Please enter a valid deposit amount.");
+                return;
+            }
+            balance += amount;
+            updateBalance();
+            showMessage(`Successfully deposited ₱${amount.toFixed(2)}.`);
+            addTransaction("Deposit", amount);
+            clearInput();
+        }
+        /* WITHDRAW */
+        function withdraw() {
+            let amount = getAmount();
+            if (isNaN(amount) || amount <= 0) {
+                showMessage("Please enter a valid withdrawal amount.");
+                return;
+            }
+            if (amount > balance) {
+                showMessage("Insufficient funds.");
+                return;
+            }
+            balance -= amount;
+            updateBalance();
+            showMessage(`Successfully withdrew ₱${amount.toFixed(2)}.`);
+            addTransaction("Withdraw", amount);
+            clearInput();
+        }
+        /* INPUT*/
+        function getAmount() {
+            return parseFloat(document.getElementById("amount").value);
+        }
+        /* UPDATE BALANCE DISPLAY */
+        function updateBalance() {
+            document.getElementById("balance").innerHTML =
+                `Balance: ₱${balance.toFixed(2)}`;
+        }
+        /* SHOW MESSAGE */
+        function showMessage(message) {
+            document.getElementById("message").innerHTML = message;
+        }
+        /* CLEAR INPUT */
+        function clearInput() {
+            document.getElementById("amount").value = "";
+        }
+        /* ADD TRANSACTION */
+        function addTransaction(type, amount) {
+            transactionLog.push({
+                datetime: new Date().toLocaleString(),
+                transaction: type,
+                amount: amount,
+                balance: balance
+            });
+            updateLogTable();
+        }
+        /* UPDATE TABLE */
+        function updateLogTable() {
+            let tbody = document.querySelector("#logTable tbody");
+            tbody.innerHTML = "";
+            transactionLog.forEach(function (item, index) {
+                tbody.innerHTML += `
+        <tr>
+            <td>${index + 1}</td>
+            <td>${item.datetime}</td>
+            <td>${item.transaction}</td>
+            <td>₱${item.amount.toFixed(2)}</td>
+            <td>₱${item.balance.toFixed(2)}</td>
+        </tr>
+        `;
+            });
+        }
+    </script>
+</body>
+
+</html>

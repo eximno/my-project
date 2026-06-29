@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Wolfgeng Restaurant - Inventory Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Lato', Arial, sans-serif;
+        }
+
+        body {
+            background: #1a1710;
+            background-image:
+                radial-gradient(ellipse at top, rgba(201,168,76,0.07) 0%, transparent 60%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 750px;
+            background: #fff;
+            background: linear-gradient(160deg, #fdfaf4 0%, #f7f2e8 100%);
+            padding: 30px 28px;
+            border-radius: 4px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .55), 0 0 0 1px rgba(201,168,76,0.25);
+            border-top: 4px solid #c9a84c;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 4px;
+            color: #1a1710;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a08840;
+            font-size: 12px;
+            margin-bottom: 22px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input, select {
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-family: 'Lato', sans-serif;
+            border: 1px solid #d6c99a;
+            border-radius: 3px;
+            background: #fffdf7;
+            color: #1a1710;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #c9a84c;
+        }
+
+        input::placeholder { color: #b0a07a; }
+
+        select option { background: #fffdf7; }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            padding: 11px 24px;
+            border: none;
+            color: white;
+            font-size: 13px;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 3px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: filter 0.2s, transform 0.1s;
+        }
+
+        button:hover  { filter: brightness(1.12); }
+        button:active { transform: scale(0.97); }
+
+        .btn-add      { background: linear-gradient(135deg, #2e7d32, #43a047); }
+        .btn-clear    { background: linear-gradient(135deg, #555, #777); font-size: 11px; padding: 8px 16px; }
+        .btn-sync     { background: linear-gradient(135deg, #5c3d9e, #7c52d2); font-size: 11px; padding: 8px 16px; }
+
+        #message {
+            margin-bottom: 16px;
+            padding: 11px 14px;
+            background: #fffdf5;
+            border-left: 4px solid #c9a84c;
+            border-radius: 3px;
+            font-weight: 700;
+            font-size: 13.5px;
+            color: #2a2010;
+            box-shadow: inset 0 1px 3px rgba(201,168,76,0.08);
+        }
+
+        hr {
+            margin: 22px 0;
+            border: none;
+            border-top: 1px solid #e0d4a8;
+        }
+
+        h3 {
+            margin-bottom: 10px;
+            color: #1a1710;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        table th {
+            background: linear-gradient(135deg, #1a1710, #2e2a1e);
+            color: #c9a84c;
+            padding: 10px 9px;
+            text-align: center;
+            letter-spacing: 0.08em;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        table td {
+            border: 1px solid #e0d4a8;
+            padding: 8px 9px;
+            text-align: center;
+            color: #2a2010;
+        }
+
+        table tbody tr:nth-child(even) { background: #faf6ec; }
+        table tbody tr:hover           { background: #f5efd6; }
+
+        .low-stock { color: #c62828; font-weight: bold; }
+
+        /* ── inline row action buttons ── */
+        .btn-row {
+            padding: 5px 9px;
+            border: none;
+            color: white;
+            font-size: 11px;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 3px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: filter 0.2s, transform 0.1s;
+            margin: 1px;
+        }
+        .btn-row:hover  { filter: brightness(1.15); }
+        .btn-row:active { transform: scale(0.95); }
+        .btn-row-restock { background: linear-gradient(135deg, #1a5c9e, #1976d2); }
+        .btn-row-sell    { background: linear-gradient(135deg, #bf6000, #e65100); }
+        .btn-row-delete  { background: linear-gradient(135deg, #a01a1a, #c62828); }
+
+        /* ── sync status bar ── */
+        #syncStatus {
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #a08840;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #syncDot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        #syncDot.syncing  { background: #f0a500; animation: pulse 0.9s infinite; }
+        #syncDot.synced   { background: #2e7d32; }
+        #syncDot.error    { background: #c62828; }
+        @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        /* ── modal overlay ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 9, 6, 0.72);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal-box {
+            background: linear-gradient(160deg, #fdfaf4, #f0e9d5);
+            border-top: 4px solid #c9a84c;
+            border-radius: 4px;
+            padding: 28px 28px 22px;
+            width: 320px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,76,0.2);
+        }
+        .modal-box h4 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1710;
+            margin-bottom: 4px;
+        }
+        .modal-box p {
+            font-size: 12px;
+            color: #a08840;
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid #d6c99a;
+            border-radius: 3px;
+            background: #fffdf7;
+            color: #1a1710;
+            outline: none;
+            margin-bottom: 14px;
+        }
+        .modal-box input:focus { border-color: #c9a84c; }
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 10px;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+        }
+        .btn-modal-confirm { background: linear-gradient(135deg, #2e7d32, #43a047); }
+        .btn-modal-cancel  { background: linear-gradient(135deg, #555, #777); }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>🍽️ Wolfgeng Restaurant</h2>
+        <p class="subtitle">Inventory Management System</p>
+
+        <!-- Form inputs -->
+        <div class="form-row">
+            <input type="text"   id="itemName"  placeholder="Item Name (e.g. Pasta)">
+            <select id="category">
+                <option value="">-- Category --</option>
+                <option>Appetizer</option>
+                <option>Main Course</option>
+                <option>Dessert</option>
+                <option>Beverage</option>
+                <option>Ingredient</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <input type="number" id="itemQty"   placeholder="Quantity" min="1">
+            <input type="number" id="itemPrice" placeholder="Unit Price (₱)" min="0" step="0.01">
+        </div>
+
+        <!-- Action buttons -->
+        <div class="buttons">
+            <button class="btn-add"  onclick="addItem()">Add Item</button>
+            <button class="btn-sync" onclick="loadFromSheets()">↺ Sync from Sheet</button>
+        </div>
+
+        <!-- Sync status -->
+        <div id="syncStatus"><span id="syncDot"></span><span id="syncText">Not synced yet</span></div>
+
+        <div id="message">Welcome! Enter an item name and fill in the details to get started.</div>
+
+        <!-- Inventory Table -->
+        <hr>
+        <h3>Current Inventory</h3>
+        <table id="inventoryTable">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Value</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <!-- Transaction Log -->
+        <hr>
+        <h3>Transaction Log (Audit)</h3>
+        <button class="btn-clear" onclick="clearLog()">Clear Log</button>
+        <br><br>
+        <table id="logTable">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Date & Time</th>
+                    <th>Transaction</th>
+                    <th>Item</th>
+                    <th>Qty Changed</th>
+                    <th>New Stock</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Qty Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <h4 id="modalTitle">Enter Quantity</h4>
+            <p id="modalSubtitle">How many units?</p>
+            <input type="number" id="modalQty" placeholder="e.g. 5" min="1">
+            <div class="modal-actions">
+                <button class="btn-row btn-modal-cancel"  onclick="closeModal()">Cancel</button>
+                <button class="btn-row btn-modal-confirm" onclick="confirmModal()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Google Apps Script Web App URL ────────────────────────────────
+        var GAS_URL = "https://script.google.com/macros/s/AKfycbxDbrZX6O6-axapC2miDxY8IJfqjd69qe-V1sXnta-bIuw8QTOFqAd1NjopUI3WYqy3/exec";
+
+        // ── State ─────────────────────────────────────────────────────────
+        var inventory      = [];
+        var transactionLog = [];
+
+        // ── GET INPUT VALUES (anonymous functions) ────────────────────────
+
+        var getName = function () {
+            return document.getElementById("itemName").value.trim();
+        };
+
+        var getCategory = function () {
+            return document.getElementById("category").value;
+        };
+
+        var getQty = function () {
+            return parseInt(document.getElementById("itemQty").value);
+        };
+
+        var getPrice = function () {
+            return parseFloat(document.getElementById("itemPrice").value);
+        };
+
+        var showMessage = function (msg) {
+            document.getElementById("message").innerHTML = msg;
+        };
+
+        var clearInputs = function () {
+            document.getElementById("itemName").value  = "";
+            document.getElementById("itemQty").value   = "";
+            document.getElementById("itemPrice").value = "";
+            document.getElementById("category").value  = "";
+        };
+
+        // ── SYNC STATUS ───────────────────────────────────────────────────
+
+        var setSyncStatus = function (state, text) {
+            var dot  = document.getElementById("syncDot");
+            var span = document.getElementById("syncText");
+            dot.className = state;   // "syncing" | "synced" | "error" | ""
+            span.textContent = text;
+        };
+
+        // ── LOAD FROM GOOGLE SHEETS (on page load + manual sync) ──────────
+
+        var loadFromSheets = function () {
+            if (!GAS_URL) return;
+
+            setSyncStatus("syncing", "Syncing from Google Sheets…");
+            showMessage("⏳ Loading data from Google Sheets…");
+
+            fetch(GAS_URL, { method: "GET" })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    // Restore inventory
+                    if (data.inventory && data.inventory.length > 0) {
+                        inventory = data.inventory;
+                        renderInventory();
+                    }
+
+                    // Restore transaction log
+                    if (data.transactions && data.transactions.length > 0) {
+                        transactionLog = data.transactions;
+                        renderLog();
+                    }
+
+                    var count = (data.inventory || []).length;
+                    setSyncStatus("synced", "Synced — " + count + " item(s) loaded · " + new Date().toLocaleTimeString());
+                    showMessage("✅ Data loaded from Google Sheets. " + count + " item(s) in inventory.");
+                })
+                .catch(function (err) {
+                    setSyncStatus("error", "Sync failed — check GAS URL or network");
+                    showMessage("❌ Could not load from Google Sheets. Check your GAS_URL.");
+                    console.log("Load error:", err);
+                });
+        };
+
+        // ── FIND ITEM INDEX ───────────────────────────────────────────────
+
+        var findItem = function (name) {
+            for (var i = 0; i < inventory.length; i++) {
+                if (inventory[i].name.toLowerCase() === name.toLowerCase()) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+
+        // ── ADD ITEM ──────────────────────────────────────────────────────
+
+        var addItem = function () {
+            var name     = getName();
+            var category = getCategory();
+            var qty      = getQty();
+            var price    = getPrice();
+
+            if (!name)                     return showMessage("Please enter an item name.");
+            if (!category)                 return showMessage("Please select a category.");
+            if (isNaN(qty)   || qty   <= 0) return showMessage("Please enter a valid quantity.");
+            if (isNaN(price) || price <= 0) return showMessage("Please enter a valid price.");
+
+            if (findItem(name) !== -1) {
+                return showMessage("Item already exists. Use Restock to add quantity.");
+            }
+
+            inventory.push({ name: name, category: category, qty: qty, price: price });
+            showMessage("✅ Added <strong>" + name + "</strong> — " + qty + " units @ ₱" + price.toFixed(2));
+            addLog("Add Item", name, category, price, qty, qty);
+            clearInputs();
+            renderInventory();
+        };
+
+        // ── RESTOCK ───────────────────────────────────────────────────────
+
+        var restockItem = function () {
+            var name = getName();
+            var qty  = getQty();
+
+            if (!name)               return showMessage("Enter the item name to restock.");
+            if (isNaN(qty) || qty <= 0) return showMessage("Enter a valid quantity to add.");
+
+            var idx = findItem(name);
+            if (idx === -1)          return showMessage("Item not found in inventory.");
+
+            inventory[idx].qty += qty;
+            showMessage("🔄 Restocked <strong>" + name + "</strong> by " + qty + " units. New stock: " + inventory[idx].qty);
+            addLog("Restock", name, inventory[idx].category, inventory[idx].price, qty, inventory[idx].qty);
+            clearInputs();
+            renderInventory();
+        };
+
+        // ── SELL / USE ────────────────────────────────────────────────────
+
+        var sellItem = function () {
+            var name = getName();
+            var qty  = getQty();
+
+            if (!name)               return showMessage("Enter the item name to sell/use.");
+            if (isNaN(qty) || qty <= 0) return showMessage("Enter a valid quantity.");
+
+            var idx = findItem(name);
+            if (idx === -1)          return showMessage("Item not found in inventory.");
+            if (qty > inventory[idx].qty) return showMessage("❌ Not enough stock. Available: " + inventory[idx].qty);
+
+            inventory[idx].qty -= qty;
+            showMessage("🛒 Sold/Used <strong>" + qty + " units</strong> of " + name + ". Remaining: " + inventory[idx].qty);
+            addLog("Sell / Use", name, inventory[idx].category, inventory[idx].price, qty, inventory[idx].qty);
+            clearInputs();
+            renderInventory();
+        };
+
+        // ── DELETE ITEM ───────────────────────────────────────────────────
+
+        var deleteItem = function () {
+            var name = getName();
+            if (!name) return showMessage("Enter the item name to delete.");
+
+            var idx = findItem(name);
+            if (idx === -1) return showMessage("Item not found.");
+
+            var item = inventory[idx];
+            inventory.splice(idx, 1);
+            showMessage("🗑️ Deleted <strong>" + name + "</strong> from inventory.");
+            addLog("Delete Item", name, item.category, item.price, 0, 0);
+            clearInputs();
+            renderInventory();
+        };
+
+        // ── RENDER INVENTORY TABLE ────────────────────────────────────────
+
+        var renderInventory = function () {
+            var tbody = document.querySelector("#inventoryTable tbody");
+            tbody.innerHTML = "";
+
+            if (inventory.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="color:#888;">No items in inventory yet.</td></tr>';
+                return;
+            }
+
+            inventory.forEach(function (item, index) {
+                var total  = item.qty * item.price;
+                var status = item.qty === 0 ? "Out of Stock"
+                           : item.qty <= 5  ? "Low Stock"
+                           : "In Stock";
+                var statusClass = (status !== "In Stock") ? "low-stock" : "";
+
+                tbody.innerHTML += "<tr>" +
+                    "<td>" + (index + 1) + "</td>" +
+                    "<td>" + item.name + "</td>" +
+                    "<td>" + item.category + "</td>" +
+                    "<td>" + item.qty + "</td>" +
+                    "<td>₱" + Number(item.price).toFixed(2) + "</td>" +
+                    "<td>₱" + total.toFixed(2) + "</td>" +
+                    '<td class="' + statusClass + '">' + status + "</td>" +
+                    "<td>" +
+                        '<button class="btn-row btn-row-restock" onclick="openModal(' + index + ',\'restock\')">Restock</button>' +
+                        '<button class="btn-row btn-row-sell"    onclick="openModal(' + index + ',\'sell\')">Sell/Use</button>' +
+                        '<button class="btn-row btn-row-delete"  onclick="openModal(' + index + ',\'delete\')">Delete</button>' +
+                    "</td>" +
+                    "</tr>";
+            });
+        };
+
+        // ── MODAL (for row actions) ───────────────────────────────────────
+
+        var _modalIndex  = -1;
+        var _modalAction = "";
+
+        var openModal = function (index, action) {
+            _modalIndex  = index;
+            _modalAction = action;
+            var item = inventory[index];
+
+            if (action === "delete") {
+                document.getElementById("modalTitle").innerHTML    = "Delete Item";
+                document.getElementById("modalSubtitle").innerHTML = 'Remove <strong>' + item.name + '</strong> from inventory?';
+                document.getElementById("modalQty").style.display  = "none";
+            } else if (action === "restock") {
+                document.getElementById("modalTitle").innerHTML    = "Restock";
+                document.getElementById("modalSubtitle").innerHTML = 'Add stock for <strong>' + item.name + '</strong>';
+                document.getElementById("modalQty").style.display  = "block";
+                document.getElementById("modalQty").value          = "";
+            } else {
+                document.getElementById("modalTitle").innerHTML    = "Sell / Use";
+                document.getElementById("modalSubtitle").innerHTML = 'Units to sell/use from <strong>' + item.name + '</strong> (available: ' + item.qty + ')';
+                document.getElementById("modalQty").style.display  = "block";
+                document.getElementById("modalQty").value          = "";
+            }
+
+            document.getElementById("modalOverlay").classList.add("open");
+            if (action !== "delete") {
+                setTimeout(function () { document.getElementById("modalQty").focus(); }, 100);
+            }
+        };
+
+        var closeModal = function () {
+            document.getElementById("modalOverlay").classList.remove("open");
+            _modalIndex  = -1;
+            _modalAction = "";
+        };
+
+        var confirmModal = function () {
+            if (_modalIndex === -1) return;
+            var item = inventory[_modalIndex];
+
+            if (_modalAction === "delete") {
+                inventory.splice(_modalIndex, 1);
+                showMessage("🗑️ Deleted <strong>" + item.name + "</strong> from inventory.");
+                addLog("Delete Item", item.name, item.category, item.price, 0, 0);
+                closeModal();
+                renderInventory();
+                return;
+            }
+
+            var qty = parseInt(document.getElementById("modalQty").value);
+            if (isNaN(qty) || qty <= 0) {
+                return showMessage("Please enter a valid quantity.");
+            }
+
+            if (_modalAction === "restock") {
+                inventory[_modalIndex].qty += qty;
+                showMessage("🔄 Restocked <strong>" + item.name + "</strong> by " + qty + " units. New stock: " + inventory[_modalIndex].qty);
+                addLog("Restock", item.name, item.category, item.price, qty, inventory[_modalIndex].qty);
+            } else {
+                if (qty > item.qty) {
+                    return showMessage("❌ Not enough stock. Available: " + item.qty);
+                }
+                inventory[_modalIndex].qty -= qty;
+                showMessage("🛒 Sold/Used <strong>" + qty + " units</strong> of " + item.name + ". Remaining: " + inventory[_modalIndex].qty);
+                addLog("Sell / Use", item.name, item.category, item.price, qty, inventory[_modalIndex].qty);
+            }
+
+            closeModal();
+            renderInventory();
+        };
+
+        // close modal on overlay click
+        document.getElementById("modalOverlay").addEventListener("click", function (e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ── ADD TO TRANSACTION LOG ────────────────────────────────────────
+
+        var addLog = function (type, itemName, category, price, qtyChanged, newStock) {
+            var entry = {
+                datetime:   new Date().toLocaleString(),
+                type:       type,
+                itemName:   itemName,
+                category:   category,
+                price:      price,
+                qtyChanged: qtyChanged,
+                newStock:   newStock
+            };
+            transactionLog.push(entry);
+            renderLog();
+            sendToSheets(entry);
+        };
+
+        // ── RENDER TRANSACTION LOG ────────────────────────────────────────
+
+        var renderLog = function () {
+            var tbody = document.querySelector("#logTable tbody");
+            tbody.innerHTML = "";
+
+            transactionLog.forEach(function (entry, index) {
+                tbody.innerHTML += "<tr>" +
+                    "<td>" + (index + 1) + "</td>" +
+                    "<td>" + entry.datetime + "</td>" +
+                    "<td>" + entry.type + "</td>" +
+                    "<td>" + entry.itemName + "</td>" +
+                    "<td>" + entry.qtyChanged + "</td>" +
+                    "<td>" + entry.newStock + "</td>" +
+                    "</tr>";
+            });
+        };
+
+        // ── CLEAR LOG ─────────────────────────────────────────────────────
+
+        var clearLog = function () {
+            transactionLog = [];
+            renderLog();
+            showMessage("Transaction log cleared.");
+        };
+
+        // ── SEND TO GOOGLE SHEETS ─────────────────────────────────────────
+
+        var sendToSheets = function (entry) {
+            if (!GAS_URL) return;
+
+            setSyncStatus("syncing", "Saving to Google Sheets…");
+
+            fetch(GAS_URL, {
+                method:  "POST",
+                mode:    "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify(entry)
+            }).then(function () {
+                setSyncStatus("synced", "Saved · " + new Date().toLocaleTimeString());
+            }).catch(function (err) {
+                setSyncStatus("error", "Save failed — check connection");
+                console.log("GAS Error:", err);
+            });
+        };
+
+        // ── AUTO-LOAD ON PAGE START ───────────────────────────────────────
+        loadFromSheets();
+    </script>
+</body>
+
+</html>
