@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Self-Check Kiosk</title>
+  <style>
+    :root {
+      --red-deep: #B3261E;
+      --red-main: #D9362B;
+      --red-soft: #F6D9D6;
+      --bg: #FAFAFA;
+      --card: #FFFFFF;
+      --text-main: #2B2B2B;
+      --text-muted: #7A7A7A;
+      --border: #ECE4E4;
+      --cat-under: #5B8AC7;
+      --cat-under-bg: #EAF1FB;
+      --cat-normal: #4C9A6B;
+      --cat-normal-bg: #E9F6EE;
+      --cat-over: #C98530;
+      --cat-over-bg: #FBF0DF;
+      --cat-obese: #C0392B;
+      --cat-obese-bg: #FBE6E4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--red-main);
+      color: #fff;
+      padding: 1.4rem 1.2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    header p {
+      margin: 0.3rem 0 0;
+      font-size: 0.85rem;
+      color: #FBE1DF;
+    }
+
+    main {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      margin-bottom: 1.4rem;
+    }
+
+    .card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.05rem;
+      color: var(--red-deep);
+    }
+
+    .field {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #FDFDFD;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      transition: border-color 0.15s ease;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--red-main);
+      background: #fff;
+    }
+
+    .row {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .row .field {
+      flex: 1;
+    }
+
+    .error-text {
+      color: var(--red-deep);
+      font-size: 0.78rem;
+      margin-top: 0.3rem;
+      min-height: 1em;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 9px;
+      background: var(--red-main);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    button:hover {
+      background: var(--red-deep);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #resultCard {
+      text-align: center;
+      border-left: 6px solid var(--cat-normal);
+    }
+
+    #resultCard .bmi-value {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin: 0.2rem 0;
+    }
+
+    #resultCard .category-badge {
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+
+    #resultCard .message {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    #resultCard .save-status {
+      font-size: 0.78rem;
+      margin-top: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .history-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .history-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0.2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .history-list li:last-child {
+      border-bottom: none;
+    }
+
+    .history-tag {
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .empty-note {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 0.4rem 0;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 1rem;
+    }
+
+    @media (max-width:600px) {
+      .row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      main {
+        padding: 1.2rem 0.8rem 2.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Health Self-Check Kiosk</h1>
+    <p>Quick, private BMI check with a personalized recommendation</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>Enter Your Information</h2>
+      <form id="bmiForm" novalidate>
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Juan Dela Cruz" required>
+          <div class="error-text" id="err-name"></div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="age">Age</label>
+            <input type="number" id="age" min="1" max="120" placeholder="20" required>
+            <div class="error-text" id="err-age"></div>
+          </div>
+          <div class="field">
+            <label for="sex">Sex</label>
+            <select id="sex" required>
+              <option value="">Select</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+            </select>
+            <div class="error-text" id="err-sex"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="weight">Weight (kg)</label>
+            <input type="number" id="weight" min="1" step="0.1" placeholder="60" required>
+            <div class="error-text" id="err-weight"></div>
+          </div>
+          <div class="field">
+            <label for="height">Height (cm)</label>
+            <input type="number" id="height" min="1" step="0.1" placeholder="165" required>
+            <div class="error-text" id="err-height"></div>
+          </div>
+        </div>
+        <button type="submit">Check My BMI</button>
+      </form>
+    </section>
+    <section id="resultCard" class="card hidden">
+      <span class="category-badge" id="categoryBadge"></span>
+      <div class="bmi-value" id="bmiValue"></div>
+      <div class="message" id="resultMessage"></div>
+      <div class="save-status" id="saveStatus"></div>
+    </section>
+    <section class="card">
+      <h2>Recent Submissions (this session)</h2>
+      <ul class="history-list" id="historyList">
+        <li class="empty-note" id="emptyNote">No submissions yet.</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    Timothy Lawrence A. Delmoro &middot; BIT33 &middot; Laboratory 5
+  </footer>
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyx7dJNNxwvNOLK5qk8twn7XMABuGtH0Ut-AYCdWDPAAe1mRpREaN-o9j8RY3doKAfe/exec";
+    const form = document.getElementById('bmiForm');
+    const resultCard = document.getElementById('resultCard');
+    const categoryBadge = document.getElementById('categoryBadge');
+    const bmiValue = document.getElementById('bmiValue');
+    const resultMessage = document.getElementById('resultMessage');
+    const saveStatus = document.getElementById('saveStatus');
+    const historyList = document.getElementById('historyList');
+    const emptyNote = document.getElementById('emptyNote');
+    const submissions = [];
+    // Category lookup used for styling (colors match the CSS custom properties)
+    const categoryStyles = {
+      Underweight: { color: 'var(--cat-under)', bg: 'var(--cat-under-bg)' },
+      Normal: { color: 'var(--cat-normal)', bg: 'var(--cat-normal-bg)' },
+      Overweight: { color: 'var(--cat-over)', bg: 'var(--cat-over-bg)' },
+      Obese: { color: 'var(--cat-obese)', bg: 'var(--cat-obese-bg)' }
+    };
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      // Grab raw field values
+      const fields = {
+        name: document.getElementById('name').value.trim(),
+        age: document.getElementById('age').value,
+        sex: document.getElementById('sex').value,
+        weight: document.getElementById('weight').value,
+        height: document.getElementById('height').value
+      };
+      // Clear previous error messages first
+      ['name', 'age', 'sex', 'weight', 'height'].forEach(function (key) {
+        document.getElementById('err-' + key).textContent = '';
+      });
+      // ----- LOOP: validate every required field in one pass -----
+      const requiredKeys = ['name', 'age', 'sex', 'weight', 'height'];
+      let hasError = false;
+      for (let i = 0; i < requiredKeys.length; i++) {
+        const key = requiredKeys[i];
+        const value = fields[key];
+        // ----- IF-ELSE: per-field validation -----
+        if (value === '' || value === null) {
+          document.getElementById('err-' + key).textContent = 'This field is required.';
+          hasError = true;
+        } else if ((key === 'age' || key === 'weight' || key === 'height') && (isNaN(value) || parseFloat(value) <= 0)) {
+          document.getElementById('err-' + key).textContent = 'Enter a valid positive number.';
+          hasError = true;
+        } else if (key === 'age' && (parseFloat(value) < 1 || parseFloat(value) > 120)) {
+          document.getElementById('err-' + key).textContent = 'Age must be between 1 and 120.';
+          hasError = true;
+        }
+      }
+      if (hasError) {
+        resultCard.classList.add('hidden');
+        return;
+      }
+      const name = fields.name;
+      const age = parseFloat(fields.age);
+      const sex = fields.sex;
+      const weight = parseFloat(fields.weight);
+      const heightCm = parseFloat(fields.height);
+      const heightM = heightCm / 100;
+      const bmi = +(weight / (heightM * heightM)).toFixed(1);
+      let category, message;
+      // ----- SWITCH-CASE: classify BMI -----
+      switch (true) {
+        case bmi < 18.5:
+          category = 'Underweight';
+          message = 'Consider a balanced, calorie-sufficient diet and consult a nutritionist if needed.';
+          break;
+        case bmi < 25:
+          category = 'Normal';
+          message = 'Great! Keep up your healthy habits and regular activity.';
+          break;
+        case bmi < 30:
+          category = 'Overweight';
+          message = 'Consider more physical activity and mindful eating habits.';
+          break;
+        default:
+          category = 'Obese';
+          message = 'We recommend consulting a healthcare provider for guidance.';
+      }
+      showResult(bmi, category, message);
+      const record = { name, age, sex, weight, heightCm, bmi, category, timestamp: new Date() };
+      submissions.push(record);
+      renderHistory();
+      recordSubmission(record);
+      form.reset();
+    });
+    function showResult(bmi, category, message) {
+      const style = categoryStyles[category];
+      resultCard.style.borderLeftColor = style.color;
+      categoryBadge.textContent = category;
+      categoryBadge.style.color = style.color;
+      categoryBadge.style.background = style.bg;
+      bmiValue.textContent = bmi;
+      bmiValue.style.color = style.color;
+      resultMessage.textContent = message;
+      saveStatus.textContent = 'Saving to records...';
+      resultCard.classList.remove('hidden');
+    }
+    // ----- LOOP: render the running list of session submissions -----
+    function renderHistory() {
+      historyList.innerHTML = '';
+      if (submissions.length === 0) {
+        historyList.appendChild(emptyNote);
+        return;
+      }
+      submissions.slice().reverse().forEach(function (record) {
+        const style = categoryStyles[record.category];
+        const li = document.createElement('li');
+        const left = document.createElement('span');
+        left.textContent = record.name + ' \u2014 BMI ' + record.bmi;
+        const tag = document.createElement('span');
+        tag.className = 'history-tag';
+        tag.textContent = record.category;
+        tag.style.color = style.color;
+        tag.style.background = style.bg;
+        li.appendChild(left);
+        li.appendChild(tag);
+        historyList.appendChild(li);
+      });
+    }
+    // Send the submission to the Google Sheet via Apps Script Web App
+    function recordSubmission(record) {
+      if (!SCRIPT_URL || SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
+        saveStatus.textContent = 'Not saved: Apps Script URL not configured.';
+        return;
+      }
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(record)
+      })
+        .then(function () {
+          saveStatus.textContent = 'Saved to records.';
+        })
+        .catch(function () {
+          saveStatus.textContent = 'Could not reach the server. Record kept locally only.';
+        });
+    }
+  </script>
+</body>
+
+</html>
