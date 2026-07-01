@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Salle Pickleball Club &mdash; Court Reservation</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --deep-green: #0B3D2E;
+      --deep-green-dark: #082A20;
+      --gold: #C9A227;
+      --gold-soft: #E9D9A6;
+      --cream: #FAF7F0;
+      --card: #FFFFFF;
+      --text-main: #22291F;
+      --text-muted: #7A7F72;
+      --border: #E7E1D2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--cream);
+      color: var(--text-main);
+    }
+
+    h1,
+    h2,
+    h3,
+    .brand,
+    .display-font {
+      font-family: 'Playfair Display', serif;
+    }
+
+    header.hero {
+      background: linear-gradient(135deg, var(--deep-green) 0%, var(--deep-green-dark) 100%);
+      color: #fff;
+      padding: 2.6rem 1rem 3.2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    header.hero h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin-bottom: 0.4rem;
+    }
+
+    header.hero p {
+      color: var(--gold-soft);
+      font-size: 0.95rem;
+      margin: 0;
+      letter-spacing: 0.3px;
+    }
+
+    .container-narrow {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .lift-card {
+      margin-top: -2.2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-luxe {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(11, 61, 46, 0.08);
+      padding: 1.8rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .card-luxe h2 {
+      font-size: 1.2rem;
+      color: var(--deep-green);
+      margin-bottom: 0.3rem;
+    }
+
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .form-control,
+    .form-select {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 0.55rem 0.8rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.92rem;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 0.2rem rgba(201, 162, 39, 0.18);
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      border: none;
+      color: var(--deep-green-dark);
+      font-weight: 600;
+      padding: 0.7rem 1.2rem;
+      border-radius: 10px;
+      letter-spacing: 0.3px;
+      transition: background 0.15s ease;
+    }
+
+    .btn-gold:hover {
+      background: #B08F1E;
+      color: #fff;
+    }
+
+    .rate-table {
+      font-size: 0.82rem;
+    }
+
+    .rate-table th {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .badge-period {
+      font-weight: 500;
+      font-size: 0.72rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+    }
+
+    .badge-morning {
+      background: #E6F0EA;
+      color: #2F6A4F;
+    }
+
+    .badge-afternoon {
+      background: #FBF0DC;
+      color: #A67C1D;
+    }
+
+    .badge-evening {
+      background: #F5E4E0;
+      color: #A8462E;
+    }
+
+    .error-text {
+      color: #A8462E;
+      font-size: 0.76rem;
+      margin-top: 0.25rem;
+      min-height: 1em;
+    }
+
+    .receipt {
+      border-left: 5px solid var(--gold);
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      padding: 0.35rem 0;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .receipt-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .receipt-total {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--deep-green);
+      font-weight: 700;
+      text-align: right;
+      margin-top: 0.6rem;
+    }
+
+    .table-luxe {
+      font-size: 0.85rem;
+    }
+
+    .table-luxe thead {
+      background: var(--deep-green);
+      color: #fff;
+    }
+
+    .empty-note {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 0.8rem 0;
+    }
+
+    footer.site-footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 1.6rem 1rem 2.2rem;
+    }
+
+    @media (max-width:576px) {
+      header.hero h1 {
+        font-size: 1.7rem;
+      }
+
+      .card-luxe {
+        padding: 1.3rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="container-narrow">
+      <h1>La Salle Pickleball Club</h1>
+      <p>Reserve your court by the hour &middot; Premium play, effortless booking</p>
+    </div>
+  </header>
+  <main class="container-narrow lift-card">
+    <!-- Rate reference card -->
+    <section class="card-luxe">
+      <h2>Rates</h2>
+      <p class="section-sub">Court time is priced by time period and court type. Paddle rental is available for every
+        player.</p>
+      <div class="table-responsive">
+        <table class="table rate-table mb-2">
+          <thead>
+            <tr>
+              <th>Time Period</th>
+              <th>Base Rate / hr</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge-period badge-morning">Morning 6:00&ndash;10:59</span></td>
+              <td>&#8369;180</td>
+            </tr>
+            <tr>
+              <td><span class="badge-period badge-afternoon">Afternoon 11:00&ndash;16:59</span></td>
+              <td>&#8369;200</td>
+            </tr>
+            <tr>
+              <td><span class="badge-period badge-evening">Peak Evening 17:00&ndash;20:59</span></td>
+              <td>&#8369;250</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-responsive">
+        <table class="table rate-table">
+          <thead>
+            <tr>
+              <th>Court</th>
+              <th>Adjustment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Court A &mdash; Indoor Premium</td>
+              <td>+&#8369;30/hr</td>
+            </tr>
+            <tr>
+              <td>Court B &mdash; Indoor Standard</td>
+              <td>+&#8369;0/hr</td>
+            </tr>
+            <tr>
+              <td>Court C &mdash; Outdoor</td>
+              <td>&minus;&#8369;20/hr</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="section-sub mb-0">Paddle rental: &#8369;50 per paddle. Club hours: 6:00 AM &ndash; 9:00 PM daily.</p>
+    </section>
+    <!-- Booking form -->
+    <section class="card-luxe">
+      <h2>Book a Court</h2>
+      <p class="section-sub">Fields marked required must be completed before checkout.</p>
+      <form id="bookingForm" novalidate>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="name">Full Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Maria Santos" required>
+            <div class="error-text" id="err-name"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="contact">Contact Number</label>
+            <input type="text" class="form-control" id="contact" placeholder="09XXXXXXXXX" required>
+            <div class="error-text" id="err-contact"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="name@email.com" required>
+            <div class="error-text" id="err-email"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="players">Number of Players</label>
+            <input type="number" class="form-control" id="players" min="1" max="4" placeholder="2" required>
+            <div class="error-text" id="err-players"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="date">Booking Date</label>
+            <input type="date" class="form-control" id="date" required>
+            <div class="error-text" id="err-date"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="startTime">Start Time</label>
+            <input type="time" class="form-control" id="startTime" required>
+            <div class="error-text" id="err-startTime"></div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="duration">Duration (hours)</label>
+            <select class="form-select" id="duration" required>
+              <option value="">Select</option>
+              <option value="1">1 hour</option>
+              <option value="2">2 hours</option>
+              <option value="3">3 hours</option>
+              <option value="4">4 hours</option>
+            </select>
+            <div class="error-text" id="err-duration"></div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="court">Court</label>
+            <select class="form-select" id="court" required>
+              <option value="">Select</option>
+              <option value="Court A">Court A &mdash; Indoor Premium</option>
+              <option value="Court B">Court B &mdash; Indoor Standard</option>
+              <option value="Court C">Court C &mdash; Outdoor</option>
+            </select>
+            <div class="error-text" id="err-court"></div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="paddles">Paddle Rentals</label>
+            <input type="number" class="form-control" id="paddles" min="0" max="4" value="0">
+            <div class="error-text" id="err-paddles"></div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-gold w-100 mt-4">Reserve Court</button>
+      </form>
+    </section>
+    <!-- Receipt -->
+    <section class="card-luxe receipt d-none" id="receiptCard">
+      <h2>Booking Confirmed</h2>
+      <p class="section-sub mb-2" id="receiptSubtitle"></p>
+      <div class="receipt-row"><span>Court time (<span id="rcDuration"></span> hr &times; <span
+            id="rcRate"></span>)</span><span id="rcCourtCost"></span></div>
+      <div class="receipt-row"><span>Paddle rental (<span id="rcPaddleCount"></span> &times; &#8369;50)</span><span
+          id="rcPaddleCost"></span></div>
+      <div class="receipt-total">Total: <span id="rcTotal"></span></div>
+      <div class="section-sub mt-2" id="saveStatus"></div>
+    </section>
+    <!-- All bookings -->
+    <section class="card-luxe">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <h2 class="mb-1">All Booked Reservations</h2>
+          <p class="section-sub mb-0">Live from the reservation sheet &mdash; used to prevent double-booking a court.
+          </p>
+        </div>
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="refreshBtn">Refresh</button>
+      </div>
+      <p class="section-sub mb-2 mt-2" id="loadStatus"></p>
+      <div class="table-responsive">
+        <table class="table table-luxe align-middle">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Court</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr>
+              <td colspan="5" class="empty-note">Loading bookings...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    La Salle Pickleball Club &middot; Reservation Kiosk
+  </footer>
+  <script>
+    // ===== CONFIG: Google Apps Script Web App URL =====
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqoVj_FMpqaAmzQghJmC4-cXNwJPuIYW1W03Cj8gST-DKde_4HYgWI-o3RosXp6jVM/exec";
+    const form = document.getElementById('bookingForm');
+    const receiptCard = document.getElementById('receiptCard');
+    const historyBody = document.getElementById('historyBody');
+    const loadStatus = document.getElementById('loadStatus');
+    const refreshBtn = document.getElementById('refreshBtn');
+    let bookings = []; // all bookings pulled from the sheet, also used to check court conflicts
+    // Pull every reservation from the Google Sheet so all users see the same list
+    async function loadBookings() {
+      // ----- IF-ELSE: skip the network call if no Apps Script URL is set yet -----
+      if (!SCRIPT_URL || SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
+        loadStatus.textContent = 'Apps Script URL not configured yet — showing local bookings only.';
+        renderHistory();
+        return;
+      }
+      loadStatus.textContent = 'Loading bookings...';
+      try {
+        const res = await fetch(SCRIPT_URL, { method: 'GET' });
+        const data = await res.json();
+        bookings = Array.isArray(data) ? data : [];
+        loadStatus.textContent = 'Showing ' + bookings.length + ' booking(s).';
+      } catch (err) {
+        loadStatus.textContent = 'Could not load bookings from the sheet. Showing local data only.';
+      }
+      renderHistory();
+    }
+    refreshBtn.addEventListener('click', loadBookings);
+    window.addEventListener('DOMContentLoaded', loadBookings);
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      await loadBookings();
+      const fields = {
+        name: document.getElementById('name').value.trim(),
+        contact: document.getElementById('contact').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        players: document.getElementById('players').value,
+        date: document.getElementById('date').value,
+        startTime: document.getElementById('startTime').value,
+        duration: document.getElementById('duration').value,
+        court: document.getElementById('court').value,
+        paddles: document.getElementById('paddles').value === '' ? '0' : document.getElementById('paddles').value
+      };
+      // ----- LOOP: clear every field's old error message before re-validating -----
+      Object.keys(fields).forEach(function (key) {
+        const el = document.getElementById('err-' + key);
+        if (el) el.textContent = ''; // IF-ELSE: only clear it if that error element exists
+      });
+      // ----- LOOP: validate every required field in one pass -----
+      const requiredKeys = ['name', 'contact', 'email', 'players', 'date', 'startTime', 'duration', 'court'];
+      let hasError = false;
+      for (let i = 0; i < requiredKeys.length; i++) {
+        const key = requiredKeys[i];
+        const value = fields[key];
+        // ----- IF-ELSE: field-specific validation -----
+        if (value === '' || value === null) {
+          document.getElementById('err-' + key).textContent = 'This field is required.';
+          hasError = true;
+        } else if (key === 'players' && (isNaN(value) || parseInt(value) < 1 || parseInt(value) > 4)) {
+          document.getElementById('err-players').textContent = 'Enter 1 to 4 players.';
+          hasError = true;
+        } else if (key === 'email' && value.indexOf('@') === -1) {
+          document.getElementById('err-email').textContent = 'Enter a valid email address.';
+          hasError = true;
+        } else if (key === 'date' && value < todayStr()) {
+          document.getElementById('err-date').textContent = 'Date cannot be in the past.';
+          hasError = true;
+        }
+      }
+      // ----- IF-ELSE: paddle count must stay within the 0-4 rental range -----
+      if (parseInt(fields.paddles) < 0 || parseInt(fields.paddles) > 4 || isNaN(fields.paddles)) {
+        document.getElementById('err-paddles').textContent = 'Enter 0 to 4 paddles.';
+        hasError = true;
+      }
+      // ----- IF-ELSE: stop submission entirely if any field failed validation -----
+      if (hasError) {
+        receiptCard.classList.add('d-none');
+        return;
+      }
+      const duration = parseInt(fields.duration);
+      const startMinutes = timeToMinutes(fields.startTime);
+      const endMinutes = startMinutes + duration * 60;
+      // ----- IF-ELSE: operating hours check (6:00 AM to 9:00 PM) -----
+      if (startMinutes < timeToMinutes('06:00') || endMinutes > timeToMinutes('21:00')) {
+        document.getElementById('err-startTime').textContent = 'Booking must fit within 6:00 AM - 9:00 PM.';
+        return;
+      }
+      // ----- LOOP: check every existing booking (from the shared Sheet) for a  -----
+      // ----- court/time conflict with the reservation being submitted         -----
+      for (let i = 0; i < bookings.length; i++) {
+        const b = bookings[i];
+        // IF-ELSE: only compare bookings on the same date and same court
+        if (b.date === fields.date && b.court === fields.court) {
+          const bStart = timeToMinutes(b.startTime);
+          const bEnd = bStart + b.duration * 60;
+          // IF-ELSE: the two time ranges overlap -> block the booking
+          if (startMinutes < bEnd && endMinutes > bStart) {
+            document.getElementById('err-startTime').textContent = fields.court + ' is already booked during that time.';
+            receiptCard.classList.add('d-none');
+            return;
+          }
+        }
+      }
+      // ----- SWITCH-CASE: determine base rate from time period -----
+      const startHour = Math.floor(startMinutes / 60);
+      let period, baseRate, periodBadgeClass;
+      switch (true) {
+        case startHour < 11:
+          period = 'Morning'; baseRate = 180; periodBadgeClass = 'badge-morning';
+          break;
+        case startHour < 17:
+          period = 'Afternoon'; baseRate = 200; periodBadgeClass = 'badge-afternoon';
+          break;
+        default:
+          period = 'Peak Evening'; baseRate = 250; periodBadgeClass = 'badge-evening';
+      }
+      // ----- SWITCH-CASE: determine court adjustment -----
+      let courtAdjustment;
+      switch (fields.court) {
+        case 'Court A':
+          courtAdjustment = 30;
+          break;
+        case 'Court B':
+          courtAdjustment = 0;
+          break;
+        case 'Court C':
+          courtAdjustment = -20;
+          break;
+        default:
+          courtAdjustment = 0;
+      }
+      const hourlyRate = baseRate + courtAdjustment;
+      const paddles = parseInt(fields.paddles);
+      const courtCost = hourlyRate * duration;
+      const paddleCost = paddles * 50;
+      const total = courtCost + paddleCost;
+      const record = {
+        name: fields.name, contact: fields.contact, email: fields.email,
+        players: fields.players, date: fields.date, startTime: fields.startTime,
+        duration: duration, court: fields.court, paddles: paddles,
+        period: period, hourlyRate: hourlyRate, courtCost: courtCost,
+        paddleCost: paddleCost, total: total, timestamp: new Date()
+      };
+      bookings.push(record);
+      renderHistory();
+      showReceipt(record, periodBadgeClass);
+      recordSubmission(record);
+      form.reset();
+    });
+    function timeToMinutes(t) {
+      const parts = t.split(':');
+      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+    function todayStr() {
+      const d = new Date();
+      return d.toISOString().split('T')[0];
+    }
+    function formatPeso(n) {
+      return '\u20B1' + n.toLocaleString('en-PH');
+    }
+    function showReceipt(record, badgeClass) {
+      document.getElementById('receiptSubtitle').innerHTML =
+        record.name + ' &middot; ' + record.court + ' &middot; ' + record.date + ' at ' + record.startTime +
+        ' &middot; <span class="badge-period ' + badgeClass + '">' + record.period + '</span>';
+      document.getElementById('rcDuration').textContent = record.duration;
+      document.getElementById('rcRate').textContent = formatPeso(record.hourlyRate);
+      document.getElementById('rcCourtCost').textContent = formatPeso(record.courtCost);
+      document.getElementById('rcPaddleCount').textContent = record.paddles;
+      document.getElementById('rcPaddleCost').textContent = formatPeso(record.paddleCost);
+      document.getElementById('rcTotal').textContent = formatPeso(record.total);
+      document.getElementById('saveStatus').textContent = 'Saving to records...';
+      receiptCard.classList.remove('d-none');
+    }
+    // Render the table of ALL booked reservations (loaded from the Sheet via loadBookings)
+    function renderHistory() {
+      historyBody.innerHTML = '';
+      // ----- IF-ELSE: show a placeholder row when there are no bookings at all -----
+      if (bookings.length === 0) {
+        historyBody.innerHTML = '<tr><td colspan="5" class="empty-note">No bookings yet.</td></tr>';
+        return;
+      }
+      // ----- LOOP: forEach builds one table row per booking, newest first -----
+      bookings.slice().reverse().forEach(function (b) {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + b.name + '</td>' +
+          '<td>' + b.date + '</td>' +
+          '<td>' + b.startTime + ' (' + b.duration + 'h)</td>' +
+          '<td>' + b.court + '</td>' +
+          '<td>' + formatPeso(b.total) + '</td>';
+        historyBody.appendChild(tr);
+      });
+    }
+    // Send the booking to the Google Sheet via Apps Script Web App
+    function recordSubmission(record) {
+      // ----- IF-ELSE: bail out early if the developer hasn't set SCRIPT_URL -----
+      if (!SCRIPT_URL || SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
+        document.getElementById('saveStatus').textContent = 'Not saved: Apps Script URL not configured.';
+        return;
+      }
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(record)
+      })
+        .then(function () {
+          document.getElementById('saveStatus').textContent = 'Saved to records.';
+        })
+        .catch(function () {
+          document.getElementById('saveStatus').textContent = 'Could not reach the server. Record kept locally only.';
+        });
+    }
+  </script>
+  <!-- Bootstrap JS bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
