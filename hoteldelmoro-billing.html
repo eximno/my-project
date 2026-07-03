@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel Delmoro — Billing System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Lato', Arial, sans-serif;
+    }
+
+    body {
+        background: #10110f;
+        background-image: radial-gradient(ellipse at top, rgba(180,150,60,0.07) 0%, transparent 60%);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 750px;
+        background: linear-gradient(160deg, #fdfaf4 0%, #f7f2e8 100%);
+        padding: 30px 28px;
+        border-radius: 4px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(201,168,76,0.25);
+        border-top: 4px solid #c9a84c;
+    }
+
+    h1 {
+        text-align: center;
+        color: #1a1710;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        margin-bottom: 3px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #a08840;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+    }
+
+    h3 {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 17px;
+        font-weight: 600;
+        color: #1a1710;
+        letter-spacing: 0.04em;
+        margin-bottom: 10px;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #e0d4a8;
+        margin: 20px 0;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: 4px;
+    }
+
+    label {
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #a08840;
+        font-weight: 700;
+    }
+
+    input, select {
+        padding: 10px 12px;
+        font-size: 14px;
+        font-family: 'Lato', sans-serif;
+        border: 1px solid #d6c99a;
+        border-radius: 3px;
+        background: #fffdf7;
+        color: #1a1710;
+        outline: none;
+        transition: border-color 0.2s;
+        width: 100%;
+    }
+
+    input:focus, select:focus { border-color: #c9a84c; }
+    input::placeholder         { color: #b0a07a; }
+    select option              { background: #fffdf7; }
+
+    /* checkbox row */
+    .extras-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .check-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #fffdf7;
+        border: 1px solid #d6c99a;
+        border-radius: 3px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: border-color 0.2s;
+        font-size: 13px;
+        color: #2a2010;
+    }
+
+    .check-item:hover     { border-color: #c9a84c; }
+    .check-item input[type="checkbox"] {
+        width: 15px; height: 15px;
+        accent-color: #c9a84c;
+        padding: 0; border: none; background: none;
+        flex-shrink: 0;
+    }
+
+    .check-price {
+        margin-left: auto;
+        font-size: 11px;
+        color: #a08840;
+        font-weight: 700;
+    }
+
+    /* buttons */
+    .btn-row-btns {
+        display: flex;
+        gap: 10px;
+        margin-top: 6px;
+    }
+
+    button {
+        padding: 11px 20px;
+        border: none;
+        color: white;
+        font-size: 13px;
+        font-family: 'Lato', sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: filter 0.2s, transform 0.1s;
+    }
+
+    button:hover  { filter: brightness(1.1); }
+    button:active { transform: scale(0.97); }
+
+    .btn-compute { background: linear-gradient(135deg, #a08020, #c9a84c); color: #1a1710; flex: 2; }
+    .btn-clear   { background: linear-gradient(135deg, #555, #777); flex: 1; }
+    .btn-sync    { background: linear-gradient(135deg, #5c3d9e, #7c52d2); font-size: 11px; padding: 8px 14px; }
+
+    /* message */
+    #message {
+        margin-top: 14px;
+        padding: 10px 14px;
+        background: #fffdf5;
+        border-left: 4px solid #c9a84c;
+        border-radius: 3px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #2a2010;
+        display: none;
+    }
+
+    /* result bill */
+    .result {
+        margin-top: 20px;
+        padding: 20px;
+        background: #fffdf5;
+        border-left: 4px solid #c9a84c;
+        border-radius: 3px;
+    }
+
+    .highlight {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1a1710;
+        margin-bottom: 12px;
+        letter-spacing: 0.04em;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-top: 10px;
+    }
+
+    table th {
+        background: linear-gradient(135deg, #1a1710, #2e2a1e);
+        color: #c9a84c;
+        padding: 10px 9px;
+        text-align: center;
+        letter-spacing: 0.08em;
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+
+    table td {
+        border: 1px solid #e0d4a8;
+        padding: 9px;
+        text-align: center;
+        color: #2a2010;
+    }
+
+    table tbody tr:nth-child(even) { background: #faf6ec; }
+    table tbody tr:hover            { background: #f5efd6; }
+    table tbody tr:last-child td   { font-weight: bold; color: #1a1710; background: #f0e9d5; }
+
+    .note {
+        margin-top: 12px;
+        font-size: 11px;
+        color: #a08840;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    /* sync bar */
+    #syncStatus {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #a08840;
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    #syncDot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: #ccc;
+        display: inline-block;
+        flex-shrink: 0;
+    }
+
+    #syncDot.syncing { background: #f0a500; animation: pulse 0.9s infinite; }
+    #syncDot.synced  { background: #2e7d32; }
+    #syncDot.error   { background: #c62828; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ledger table */
+    #ledger tbody tr:nth-child(even) { background: #faf6ec; }
+    #ledger tbody tr:hover           { background: #f5efd6; }
+
+    .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 2px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+    .badge-paid    { background: #d4edda; color: #2e7d32; }
+    .badge-pending { background: #fff3cd; color: #856404; }
+    .badge-cancel  { background: #f8d7da; color: #721c24; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1 id="title">🏨 Hotel Delmoro</h1>
+    <p class="subtitle">Guest Billing & Payment System</p>
+
+    <!-- SECTION: Guest Info -->
+    <h3>Guest Information</h3>
+    <div class="form-row">
+        <div class="field">
+            <label>Guest Name</label>
+            <input type="text" id="guestName" placeholder="e.g. Juan dela Cruz">
+        </div>
+        <div class="field">
+            <label>Room Number</label>
+            <input type="text" id="roomNum" placeholder="e.g. 204">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="field">
+            <label>Room Type</label>
+            <select id="roomType">
+                <option value="">-- Select Room --</option>
+                <option value="Standard|1500">Standard Room — ₱1,500/night</option>
+                <option value="Deluxe|2500">Deluxe Room — ₱2,500/night</option>
+                <option value="Suite|4500">Suite — ₱4,500/night</option>
+                <option value="Presidential|9000">Presidential Suite — ₱9,000/night</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Number of Nights</label>
+            <input type="number" id="nights" placeholder="e.g. 3" min="1">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="field">
+            <label>Number of Guests</label>
+            <input type="number" id="numGuests" placeholder="e.g. 2" min="1">
+        </div>
+        <div class="field">
+            <label>Payment Method</label>
+            <select id="payMethod">
+                <option value="Cash">Cash</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="GCash">GCash</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Add-ons -->
+    <h3>Add-on Services</h3>
+    <div class="extras-grid">
+        <label class="check-item">
+            <input type="checkbox" id="breakfast" value="800"> Breakfast Buffet
+            <span class="check-price">+₱800/night</span>
+        </label>
+        <label class="check-item">
+            <input type="checkbox" id="parking" value="300"> Parking Slot
+            <span class="check-price">+₱300/night</span>
+        </label>
+        <label class="check-item">
+            <input type="checkbox" id="spa" value="1200"> Spa Access
+            <span class="check-price">+₱1,200/stay</span>
+        </label>
+        <label class="check-item">
+            <input type="checkbox" id="airport" value="1500"> Airport Transfer
+            <span class="check-price">+₱1,500/stay</span>
+        </label>
+        <label class="check-item">
+            <input type="checkbox" id="laundry" value="400"> Laundry Service
+            <span class="check-price">+₱400/stay</span>
+        </label>
+        <label class="check-item">
+            <input type="checkbox" id="minibar" value="600"> Minibar Package
+            <span class="check-price">+₱600/stay</span>
+        </label>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Discount -->
+    <div class="form-row">
+        <div class="field">
+            <label>Guest Status / Discount</label>
+            <select id="discount">
+                <option value="0">None</option>
+                <option value="0.05">Member — 5% off</option>
+                <option value="0.10">Senior / PWD — 10% off</option>
+                <option value="0.15">Loyalty Gold — 15% off</option>
+                <option value="0.20">Corporate Account — 20% off</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Bill Status</label>
+            <select id="billStatus">
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-row-btns">
+        <button class="btn-compute" onclick="computeBill()">Generate Bill</button>
+        <button class="btn-clear"   onclick="clearForm()">Clear</button>
+    </div>
+
+    <!-- Message -->
+    <div id="message"></div>
+
+    <!-- Bill Output -->
+    <div class="result" id="output">
+        <h2 class="highlight">Billing Summary</h2>
+        <p style="font-size:13px;color:#a08840;font-style:italic;">Fill in the form above and click Generate Bill.</p>
+    </div>
+
+    <!-- Sync Status -->
+    <div id="syncStatus"><span id="syncDot"></span><span id="syncText">Not synced</span></div>
+
+    <hr>
+
+    <!-- Billing Ledger -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <h3 style="margin:0;">Billing Ledger</h3>
+        <div style="display:flex;gap:8px;">
+            <button class="btn-sync" onclick="loadFromSheets()">↺ Sync Sheet</button>
+            <button class="btn-clear" style="font-size:11px;padding:8px 14px;" onclick="clearLedger()">Clear</button>
+        </div>
+    </div>
+
+    <table id="ledger">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Date & Time</th>
+                <th>Guest</th>
+                <th>Room</th>
+                <th>Nights</th>
+                <th>Total Bill</th>
+                <th>Payment</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div><!-- /container -->
+
+<script>
+
+    // ── Google Apps Script Web App URL ────────────────────────────────
+    var GAS_URL = "https://script.google.com/macros/s/AKfycbwmMuPR09rH1iFq8ztO1ljudvc21Il0KcfgGBSdmWkP5cLvVJlayQY5BJLH-Mq1x251/exec";
+
+    // ── State ─────────────────────────────────────────────────────────
+    var ledgerLog = [];
+
+    // ── Anonymous helper functions ────────────────────────────────────
+
+    var getVal = function (id) {
+        return document.getElementById(id).value.trim();
+    };
+
+    var getNum = function (id) {
+        return parseFloat(document.getElementById(id).value);
+    };
+
+    var showMessage = function (msg, color) {
+        var el = document.getElementById("message");
+        el.style.display   = "block";
+        el.style.borderColor = color || "#c9a84c";
+        el.innerHTML = msg;
+    };
+
+    var hideMessage = function () {
+        document.getElementById("message").style.display = "none";
+    };
+
+    var setSyncStatus = function (state, text) {
+        document.getElementById("syncDot").className  = state;
+        document.getElementById("syncText").textContent = text;
+    };
+
+    var formatPeso = function (n) {
+        return "₱" + Number(n).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+    };
+
+    var getBadge = function (status) {
+        if (status === "Paid")      return '<span class="badge badge-paid">Paid</span>';
+        if (status === "Cancelled") return '<span class="badge badge-cancel">Cancelled</span>';
+        return '<span class="badge badge-pending">Pending</span>';
+    };
+
+    // ── COMPUTE BILL ──────────────────────────────────────────────────
+
+    var computeBill = function () {
+        hideMessage();
+
+        // getElementById()
+        var guestName  = document.getElementById("guestName").value.trim();
+        var roomNum    = document.getElementById("roomNum").value.trim();
+        var roomSel    = document.getElementById("roomType").value;
+        var nights     = parseFloat(document.getElementById("nights").value);
+        var numGuests  = parseFloat(document.getElementById("numGuests").value);
+        var payMethod  = document.getElementById("payMethod").value;
+        var discRate   = parseFloat(document.getElementById("discount").value);
+        var billStatus = document.getElementById("billStatus").value;
+
+        // Validation
+        if (!guestName)         return showMessage("Please enter the guest name.", "#c62828");
+        if (!roomNum)           return showMessage("Please enter the room number.", "#c62828");
+        if (!roomSel)           return showMessage("Please select a room type.", "#c62828");
+        if (isNaN(nights)   || nights    < 1) return showMessage("Please enter a valid number of nights.", "#c62828");
+        if (isNaN(numGuests)|| numGuests < 1) return showMessage("Please enter a valid number of guests.", "#c62828");
+
+        // Parse room type & rate
+        var roomParts = roomSel.split("|");
+        var roomLabel = roomParts[0];
+        var roomRate  = parseFloat(roomParts[1]);
+
+        // Room subtotal
+        var roomSubtotal = roomRate * nights;
+
+        // Extra guest surcharge: +₱300 per extra guest per night
+        var extraGuests = numGuests > 2 ? (numGuests - 2) : 0;
+        var guestSurcharge = extraGuests * 300 * nights;
+
+        // Add-ons
+        var addons = [];
+
+        var checkAddon = function (id, label, perNight) {
+            var el = document.getElementById(id);
+            if (el.checked) {
+                var cost = perNight ? parseFloat(el.value) * nights : parseFloat(el.value);
+                addons.push({ label: label, cost: cost });
+            }
+        };
+
+        checkAddon("breakfast", "Breakfast Buffet",  true);
+        checkAddon("parking",   "Parking Slot",      true);
+        checkAddon("spa",       "Spa Access",         false);
+        checkAddon("airport",   "Airport Transfer",   false);
+        checkAddon("laundry",   "Laundry Service",    false);
+        checkAddon("minibar",   "Minibar Package",    false);
+
+        var addonTotal = addons.reduce(function (sum, a) { return sum + a.cost; }, 0);
+
+        // Subtotal before discount & VAT
+        var subtotal = roomSubtotal + guestSurcharge + addonTotal;
+
+        // Discount
+        var discAmount = subtotal * discRate;
+        var afterDisc  = subtotal - discAmount;
+
+        // VAT 12%
+        var vat = afterDisc * 0.12;
+
+        // Grand total
+        var grandTotal = afterDisc + vat;
+
+        // querySelector()
+        document.querySelector("#title").textContent = "Hotel Delmoro";
+
+        // querySelectorAll() — highlight inputs
+        var allInputs = document.querySelectorAll("input[type='text'], input[type='number']");
+        allInputs.forEach(function (inp) {
+            inp.style.borderColor = "#c9a84c";
+            inp.style.background  = "#fffff0";
+        });
+
+        // getElementsByClassName()
+        var outputEl = document.getElementsByClassName("result")[0];
+
+        // innerHTML reset
+        outputEl.innerHTML = "";
+
+        // createElement() + appendChild()
+        var heading = document.createElement("h2");
+        heading.textContent = "Guest Bill";
+        heading.setAttribute("class", "highlight");
+        outputEl.appendChild(heading);
+
+        // Build bill table
+        var table = document.createElement("table");
+
+        var addonRows = addons.map(function (a) {
+            return "<tr><td>" + a.label + "</td><td>" + formatPeso(a.cost) + "</td></tr>";
+        }).join("");
+
+        var surchargeRow = guestSurcharge > 0
+            ? "<tr><td>Extra Guest Surcharge (" + extraGuests + " guest/s × " + nights + " nights)</td><td>" + formatPeso(guestSurcharge) + "</td></tr>"
+            : "";
+
+        var discRow = discRate > 0
+            ? "<tr><td>Discount (" + (discRate * 100) + "%)</td><td>- " + formatPeso(discAmount) + "</td></tr>"
+            : "";
+
+        table.innerHTML =
+            "<tr><th>Description</th><th>Amount</th></tr>" +
+            "<tr><td>Guest Name</td><td>" + guestName + "</td></tr>" +
+            "<tr><td>Room Number</td><td>" + roomNum + "</td></tr>" +
+            "<tr><td>Room Type</td><td>" + roomLabel + "</td></tr>" +
+            "<tr><td>Number of Nights</td><td>" + nights + "</td></tr>" +
+            "<tr><td>Number of Guests</td><td>" + numGuests + "</td></tr>" +
+            "<tr><td>Room Charge (" + formatPeso(roomRate) + " × " + nights + " nights)</td><td>" + formatPeso(roomSubtotal) + "</td></tr>" +
+            surchargeRow +
+            addonRows +
+            "<tr><td>Subtotal</td><td>" + formatPeso(subtotal) + "</td></tr>" +
+            discRow +
+            "<tr><td>VAT (12%)</td><td>" + formatPeso(vat) + "</td></tr>" +
+            "<tr><td><b>Grand Total</b></td><td><b>" + formatPeso(grandTotal) + "</b></td></tr>" +
+            "<tr><td>Payment Method</td><td>" + payMethod + "</td></tr>" +
+            "<tr><td>Bill Status</td><td>" + billStatus + "</td></tr>";
+
+        outputEl.appendChild(table);
+
+        // getElementsByTagName() — style alternating rows
+        var rows = document.getElementsByTagName("tr");
+        for (var i = 0; i < rows.length; i++) {
+            if (i % 2 === 1) rows[i].style.fontWeight = "bold";
+        }
+
+        // removeChild() — remove old note if present
+        var oldNote = document.querySelector(".note");
+        if (oldNote != null) {
+            outputEl.removeChild(oldNote);
+        }
+
+        // createElement() — add receipt note
+        var note = document.createElement("p");
+        note.textContent = "Thank you for staying with us. Bill generated on " + new Date().toLocaleString();
+        note.setAttribute("class", "note");
+        outputEl.appendChild(note);
+
+        // Log to ledger
+        var entry = {
+            datetime:  new Date().toLocaleString(),
+            guest:     guestName,
+            room:      roomNum + " (" + roomLabel + ")",
+            nights:    nights,
+            total:     grandTotal.toFixed(2),
+            payment:   payMethod,
+            status:    billStatus
+        };
+
+        ledgerLog.push(entry);
+        renderLedger();
+        sendToSheets(entry);
+
+        showMessage("✅ Bill generated for <strong>" + guestName + "</strong> — Total: <strong>" + formatPeso(grandTotal) + "</strong>", "#2e7d32");
+    };
+
+    // ── RENDER LEDGER TABLE ───────────────────────────────────────────
+
+    var renderLedger = function () {
+        var tbody = document.querySelector("#ledger tbody");
+        tbody.innerHTML = "";
+
+        if (ledgerLog.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="color:#888;font-style:italic;">No billing records yet.</td></tr>';
+            return;
+        }
+
+        ledgerLog.forEach(function (entry, index) {
+            tbody.innerHTML +=
+                "<tr>" +
+                "<td>" + (index + 1) + "</td>" +
+                "<td>" + entry.datetime + "</td>" +
+                "<td>" + entry.guest + "</td>" +
+                "<td>" + entry.room + "</td>" +
+                "<td>" + entry.nights + "</td>" +
+                "<td>₱" + Number(entry.total).toLocaleString("en-PH", { minimumFractionDigits: 2 }) + "</td>" +
+                "<td>" + entry.payment + "</td>" +
+                "<td>" + getBadge(entry.status) + "</td>" +
+                "</tr>";
+        });
+    };
+
+    // ── CLEAR FORM ────────────────────────────────────────────────────
+
+    var clearForm = function () {
+        // getElementById reset
+        document.getElementById("guestName").value = "";
+        document.getElementById("roomNum").value   = "";
+        document.getElementById("roomType").value  = "";
+        document.getElementById("nights").value    = "";
+        document.getElementById("numGuests").value = "";
+        document.getElementById("payMethod").value = "Cash";
+        document.getElementById("discount").value  = "0";
+        document.getElementById("billStatus").value = "Paid";
+
+        // querySelectorAll() — uncheck all checkboxes & reset inputs
+        document.querySelectorAll("input[type='checkbox']").forEach(function (cb) { cb.checked = false; });
+        document.querySelectorAll("input[type='text'], input[type='number']").forEach(function (inp) {
+            inp.style.borderColor = "#d6c99a";
+            inp.style.background  = "#fffdf7";
+        });
+
+        // getElementsByClassName()
+        document.getElementsByClassName("result")[0].innerHTML =
+            '<h2 class="highlight">Billing Summary</h2><p style="font-size:13px;color:#a08840;font-style:italic;">Fill in the form above and click Generate Bill.</p>';
+
+        hideMessage();
+        document.querySelector("#title").textContent = "🏨 Hotel Delmoro";
+    };
+
+    // ── CLEAR LEDGER ──────────────────────────────────────────────────
+
+    var clearLedger = function () {
+        ledgerLog = [];
+        renderLedger();
+    };
+
+    // ── SEND TO GOOGLE SHEETS ─────────────────────────────────────────
+
+    var sendToSheets = function (entry) {
+        if (!GAS_URL) return;
+
+        setSyncStatus("syncing", "Saving to Google Sheets…");
+
+        fetch(GAS_URL, {
+            method:  "POST",
+            mode:    "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify(entry)
+        }).then(function () {
+            setSyncStatus("synced", "Saved · " + new Date().toLocaleTimeString());
+        }).catch(function (err) {
+            setSyncStatus("error", "Save failed — check connection");
+            console.log("GAS Error:", err);
+        });
+    };
+
+    // ── LOAD FROM GOOGLE SHEETS ───────────────────────────────────────
+
+    var loadFromSheets = function () {
+        if (!GAS_URL) return showMessage("No GAS_URL set.", "#c62828");
+
+        setSyncStatus("syncing", "Syncing from Google Sheets…");
+
+        fetch(GAS_URL, { method: "GET" })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.records && data.records.length > 0) {
+                    ledgerLog = data.records;
+                    renderLedger();
+                    setSyncStatus("synced", "Synced — " + data.records.length + " record(s) · " + new Date().toLocaleTimeString());
+                    showMessage("✅ Loaded <strong>" + data.records.length + "</strong> record(s) from Google Sheets.", "#2e7d32");
+                } else {
+                    setSyncStatus("synced", "Synced — no records yet");
+                    showMessage("Sheet is empty. No records to load.", "#c9a84c");
+                }
+            })
+            .catch(function (err) {
+                setSyncStatus("error", "Sync failed");
+                showMessage("❌ Could not load from Google Sheets.", "#c62828");
+                console.log("Load error:", err);
+            });
+    };
+
+    // ── INIT ──────────────────────────────────────────────────────────
+    renderLedger();
+
+</script>
+</body>
+</html>

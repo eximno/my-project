@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript DOM Access Methods</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1e1e2e;
+            --panel: #262638;
+            --line: #33334a;
+            --text: #cdd6f4;
+            --muted: #8b8ba7;
+            --id-color: #89b4fa;
+            --class-color: #f38ba8;
+            --tag-color: #cba6f7;
+            --name-color: #a6e3a1;
+            --reset-color: #f9a875;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 15% 10%, rgba(137, 180, 250, .08), transparent 40%),
+                radial-gradient(circle at 85% 90%, rgba(203, 166, 247, .08), transparent 40%),
+                var(--bg);
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+            margin: 0;
+        }
+
+        #container {
+            width: 100%;
+            max-width: 560px;
+            background: var(--panel);
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+            overflow: hidden;
+        }
+
+        .titlebar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 18px;
+            background: #20202f;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .dot.r {
+            background: #ff5f56;
+        }
+
+        .dot.y {
+            background: #ffbd2e;
+        }
+
+        .dot.g {
+            background: #27c93f;
+        }
+
+        .filename {
+            margin-left: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .content {
+            padding: 28px 30px 32px;
+        }
+
+        h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 19px;
+            letter-spacing: .02em;
+            margin: 0 0 6px;
+            color: var(--text);
+        }
+
+        h2 .accent {
+            color: var(--id-color);
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin: 0 0 22px;
+        }
+
+
+
+        .dom-example {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14.5px;
+            padding: 14px 16px;
+            margin: 10px 0;
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--muted);
+            border-radius: 6px;
+            color: var(--muted);
+            background: #1b1b29;
+            text-align: left;
+            transition: all .25s ease;
+        }
+
+        .dom-example::before {
+            content: "// output";
+            display: block;
+            font-size: 10.5px;
+            letter-spacing: .08em;
+            color: #5a5a75;
+            margin-bottom: 6px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        button {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            font-weight: 500;
+            padding: 12px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text);
+            transition: transform .15s ease, background .2s ease;
+        }
+
+        button:active {
+            transform: scale(.97);
+        }
+
+        #btn-id {
+            border: 1px solid var(--id-color);
+            color: var(--id-color);
+        }
+
+        #btn-id:hover {
+            background: rgba(137, 180, 250, .12);
+        }
+
+        #btn-class {
+            border: 1px solid var(--class-color);
+            color: var(--class-color);
+        }
+
+        #btn-class:hover {
+            background: rgba(243, 139, 168, .12);
+        }
+
+        #btn-tag {
+            border: 1px solid var(--tag-color);
+            color: var(--tag-color);
+        }
+
+        #btn-tag:hover {
+            background: rgba(203, 166, 247, .12);
+        }
+
+        #btn-name {
+            border: 1px solid var(--name-color);
+            color: var(--name-color);
+        }
+
+        #btn-name:hover {
+            background: rgba(166, 227, 161, .12);
+        }
+
+        #btn-reset {
+            grid-column: 1 / -1;
+            border: 1px solid var(--line);
+            color: var(--muted);
+        }
+
+        #btn-reset:hover {
+            background: rgba(255, 255, 255, .05);
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div class="titlebar">
+            <span class="dot r"></span>
+            <span class="dot y"></span>
+            <span class="dot g"></span>
+            <span class="filename">dom-access.js</span>
+        </div>
+        <div class="content">
+            <h2>DOM <span class="accent">Access</span> Methods</h2>
+            <p class="subtitle">Click a method to see it grab an element live.</p>
+            <p id="message" class="dom-example">Message via ID</p>
+            <p class="dom-example">Message via Class</p>
+            <p class="dom-example">Message via Tag</p>
+            <p name="special" class="dom-example">Message via Name</p>
+            <div class="controls">
+                <button id="btn-id" onclick="accessById()">getElementById()</button>
+                <button id="btn-class" onclick="accessByClass()">getElementsByClassName()</button>
+                <button id="btn-tag" onclick="accessByTag()">getElementsByTagName()</button>
+                <button id="btn-name" onclick="accessByName()">getElementsByName()</button>
+                <button id="btn-reset" onclick="resetDemo()">↺ Reset</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function accessById() {
+            let element = document.getElementById("message");
+            element.innerHTML = "Accessed using getElementById()";
+            element.style.background = "rgba(137,180,250,.12)";
+            element.style.borderLeftColor = "#89b4fa";
+            element.style.color = "#89b4fa";
+        }
+        function accessByClass() {
+            let elements = document.getElementsByClassName("dom-example");
+            elements[1].innerHTML = "Accessed using getElementsByClassName()";
+            elements[1].style.background = "rgba(243,139,168,.12)";
+            elements[1].style.borderLeftColor = "#f38ba8";
+            elements[1].style.color = "#f38ba8";
+        }
+        function accessByTag() {
+            let tags=document.getElementsByTagName("p");
+            tags[3].innerHTML = "Accessed using getElementsByTagName()";
+            tags[3].style.background = "rgba(203,166,247,.12)";
+            tags[3].style.borderLeftColor = "#cba6f7";
+            tags[3].style.color = "#cba6f7";
+        }
+        function accessByName() {
+            let named = document.getElementsByName("special");
+            named[0].innerHTML = "Accessed using getElementsByName()";
+            named[0].style.background = "rgba(166,227,161,.12)";
+            named[0].style.borderLeftColor = "#a6e3a1";
+            named[0].style.color = "#a6e3a1";
+        }
+        function resetDemo() {
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>
