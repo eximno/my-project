@@ -1,0 +1,367 @@
+====================================================================
+  EXAM CHEAT SHEET / SKELETON
+  Single-Page Web App (HTML+CSS+JS) + Google Apps Script + Sheets
+  Reusable for: billing systems, inventory, grading, booking, etc.
+====================================================================
+
+WHY THIS WORKS FOR ANY PROBLEM
+--------------------------------------------------------------------
+Almost every exam variant of this project has the same shape:
+  1. A form (text/number inputs + a dropdown)
+  2. A "Compute/Generate/Submit" button
+  3. Control structures (if/else or switch) that turn the dropdown
+     choice + a number into some computed result
+  4. An output display area
+  5. A counter of how many times it's been run
+  6. Save each transaction as a row in Google Sheets via Apps Script
+
+You just swap out: field names, the compute logic, and column names.
+Everything else (structure, styling, save flow) stays the same.
+
+
+====================================================================
+PART 1 — HTML SKELETON (index.html)
+====================================================================
+Copy this whole block, then only touch the marked EDIT sections.
+
+--------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PAGE TITLE HERE</title>          <!-- EDIT -->
+<style>
+  body {
+    background-color: #eaf6fb;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 20px;
+    color: #123;
+  }
+  h1 {
+    text-align: center;
+    color: #1c6ea4;
+    background-color: #cfeffc;
+    padding: 15px;
+    border: 2px solid #7ec8e3;
+    border-radius: 6px;
+  }
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border: 2px solid #a9d8ef;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+    color: #1c6ea4;
+  }
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid #9ecbe0;
+    border-radius: 4px;
+    background-color: #f5fbfe;
+  }
+  button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 10px;
+    background-color: #4a90c2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  button:hover { background-color: #357ca5; }
+  #counter {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #1c6ea4;
+  }
+  #output {
+    margin-top: 20px;
+    background-color: #eaf6fb;
+    border: 2px dashed #7ec8e3;
+    border-radius: 6px;
+    padding: 15px;
+    white-space: pre-line;
+    font-family: "Courier New", monospace;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>PAGE TITLE HERE</h1>                <!-- EDIT -->
+
+<div class="container">
+
+  <!-- EDIT: add/remove fields as needed -->
+  <label for="field1">Field 1 Label</label>
+  <input type="text" id="field1" placeholder="...">
+
+  <label for="field2">Field 2 Label (number)</label>
+  <input type="number" id="field2" placeholder="...">
+
+  <label for="field3">Field 3 Label (dropdown)</label>
+  <select id="field3">
+    <option value="OptionA">Option A</option>
+    <option value="OptionB">Option B</option>
+    <option value="OptionC">Option C</option>
+  </select>
+
+  <button onclick="processForm()">ACTION BUTTON TEXT</button>   <!-- EDIT label -->
+
+  <div id="counter">Transactions Processed: 0</div>
+
+  <div id="output"></div>
+
+</div>
+
+<script>
+  var scriptURL = "PASTE_YOUR_WEB_APP_URL_HERE";
+  var transactionCount = 0;
+
+  window.onload = function() { fetchCount(); };
+
+  function fetchCount() {
+    fetch(scriptURL)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        transactionCount = data.count;
+        document.getElementById("counter").innerText =
+          "Transactions Processed: " + transactionCount;
+      })
+      .catch(function(err) { console.error(err); });
+  }
+
+  function processForm() {
+    // ---- 1. GET INPUT VALUES ----
+    var field1 = document.getElementById("field1").value;
+    var field2 = parseFloat(document.getElementById("field2").value);
+    var field3 = document.getElementById("field3").value;
+
+    // ---- 2. VALIDATE ----
+    if (field1 === "" || isNaN(field2) || field2 <= 0) {
+      alert("Please fill in all fields correctly.");
+      return;
+    }
+
+    // ---- 3. CONTROL STRUCTURES: compute result ----
+    // Pattern A: bracket/range lookup (if/else if chain)
+    var rateOrValue;
+    if (field2 >= 1 && field2 <= 20) {
+      rateOrValue = 25.00;
+    } else if (field2 >= 21 && field2 <= 40) {
+      rateOrValue = 35.00;
+    } else if (field2 >= 41 && field2 <= 60) {
+      rateOrValue = 45.00;
+    } else {
+      rateOrValue = 60.00;
+    }
+
+    // Pattern B: category lookup (switch statement — cleaner for
+    // 3+ dropdown options)
+    var discountRate = 0;
+    switch (field3) {
+      case "OptionB":
+        discountRate = 0.25;
+        break;
+      case "OptionC":
+        discountRate = 0.15;
+        break;
+      default: // OptionA / Regular case
+        discountRate = 0;
+    }
+
+    // ---- 4. FINAL COMPUTATION ----
+    var totalAmount = field2 * rateOrValue;
+    var discountAmount = totalAmount * discountRate;
+    var finalAmount = totalAmount - discountAmount;
+
+    // ---- 5. DISPLAY OUTPUT ----
+    var outputText =
+      "===== RESULT =====\n" +
+      "Field 1        : " + field1 + "\n" +
+      "Field 3        : " + field3 + "\n" +
+      "Computed Value : " + field2 + "\n" +
+      "Rate/Value     : " + rateOrValue.toFixed(2) + "\n" +
+      "Total          : " + totalAmount.toFixed(2) + "\n" +
+      "Discount       : " + discountAmount.toFixed(2) + "\n" +
+      "-------------------\n" +
+      "FINAL          : " + finalAmount.toFixed(2) + "\n" +
+      "===================";
+
+    var out = document.getElementById("output");
+    out.style.display = "block";
+    out.innerText = outputText;
+
+    // ---- 6. SAVE TO SHEET ----
+    saveToSheet(field1, field2, field3, rateOrValue, totalAmount, discountAmount, finalAmount);
+  }
+
+  function saveToSheet(field1, field2, field3, rateOrValue, totalAmount, discountAmount, finalAmount) {
+    var formData = new FormData();
+    formData.append("field1", field1);
+    formData.append("field2", field2);
+    formData.append("field3", field3);
+    formData.append("rateOrValue", rateOrValue);
+    formData.append("totalAmount", totalAmount.toFixed(2));
+    formData.append("discount", discountAmount.toFixed(2));
+    formData.append("finalAmount", finalAmount.toFixed(2));
+
+    fetch(scriptURL, { method: "POST", body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        transactionCount = data.count;
+        document.getElementById("counter").innerText =
+          "Transactions Processed: " + transactionCount;
+      })
+      .catch(function(err) { console.error(err); });
+  }
+</script>
+
+</body>
+</html>
+--------------------------------------------------------------------
+
+
+====================================================================
+PART 2 — GOOGLE APPS SCRIPT SKELETON (Code.gs)
+====================================================================
+This part almost never changes structurally. Only edit SHEET_ID,
+SHEET_NAME, the header row, and the field names inside doPost.
+
+--------------------------------------------------------------------
+// ==== CONFIGURE ====
+var SHEET_ID = "PASTE_YOUR_GOOGLE_SHEET_ID_HERE";
+var SHEET_NAME = "Transactions";
+
+function getOrCreateSheet() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sheet = ss.getSheetByName(SHEET_NAME);
+
+  if (sheet === null) {
+    sheet = ss.insertSheet(SHEET_NAME);
+    sheet.appendRow([                 // EDIT: match your fields
+      "Timestamp",
+      "Field 1",
+      "Field 2",
+      "Field 3",
+      "Rate/Value",
+      "Total Amount",
+      "Discount",
+      "Final Amount"
+    ]);
+  }
+  return sheet;
+}
+
+function doGet(e) {
+  var sheet = getOrCreateSheet();
+  var lastRow = sheet.getLastRow();
+  var count = lastRow > 0 ? lastRow - 1 : 0;
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ count: count }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var sheet = getOrCreateSheet();
+  var p = e.parameter;
+
+  sheet.appendRow([                   // EDIT: match your fields/order
+    new Date(),
+    p.field1,
+    p.field2,
+    p.field3,
+    p.rateOrValue,
+    p.totalAmount,
+    p.discount,
+    p.finalAmount
+  ]);
+
+  var count = sheet.getLastRow() - 1;
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: "success", count: count }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+--------------------------------------------------------------------
+
+
+====================================================================
+PART 3 — DEPLOYMENT STEPS (memorize this order)
+====================================================================
+1. Google Sheet: create it, copy the ID from the URL
+   (the string between /d/ and /edit).
+2. Sheet > Extensions > Apps Script > paste Code.gs > Save.
+3. Deploy > New deployment > gear icon > Web app.
+   - Execute as: Me
+   - Who has access: Anyone
+4. Deploy > copy the Web App URL.
+5. Paste that URL into `scriptURL` in index.html.
+6. Open index.html in browser, test a submission, check the Sheet.
+
+If you edit Code.gs after first deploy, you MUST redeploy:
+Deploy > Manage deployments > pencil icon > New version > Deploy.
+(Just saving the script is NOT enough — the live web app URL stays
+on the old version until you push a new version.)
+
+
+====================================================================
+PART 4 — QUICK ADAPTATION GUIDE (what usually changes on exam)
+====================================================================
+- More/fewer input fields  -> add/remove <label>+<input> pairs,
+  and matching variables in processForm() + saveToSheet() + doPost()
+- Different bracket ranges  -> edit the if/else if chain numbers
+- Different categories      -> edit the switch cases (or if/else)
+- Different formula         -> edit the "FINAL COMPUTATION" block
+- Extra computed field      -> add a variable, add it to outputText,
+  add it to formData.append(), add it to sheet.appendRow()
+- Different sheet columns   -> keep Timestamp first, then match order
+  exactly between appendRow() headers and appendRow() in doPost()
+
+
+====================================================================
+PART 5 — CONTROL STRUCTURE QUICK REFERENCE
+====================================================================
+IF/ELSE IF chain (best for numeric ranges):
+  if (x <= 20) { ... }
+  else if (x <= 40) { ... }
+  else { ... }
+
+SWITCH (best for 3+ fixed text categories):
+  switch (type) {
+    case "A": ...; break;
+    case "B": ...; break;
+    default: ...;
+  }
+
+FOR loop (if exam asks to process a list, e.g. multiple items):
+  var total = 0;
+  for (var i = 0; i < items.length; i++) {
+    total += items[i].price * items[i].qty;
+  }
+
+VALIDATION pattern (always do this before computing):
+  if (name === "" || isNaN(num) || num <= 0) {
+    alert("Invalid input");
+    return;
+  }
+
+====================================================================
+END OF CHEAT SHEET
+====================================================================
