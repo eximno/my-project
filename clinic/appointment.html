@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Appointments — Delmoro Clinic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-header">
+    <div>
+      <h1>Delmoro Clinic</h1>
+      <div class="sub">Appointment System</div>
+    </div>
+    <div class="header-right">
+      <span class="badge" id="sessionBadge"></span>
+      <button class="link-btn" onclick="logout()">Log Out</button>
+    </div>
+    <div class="pulse-line"></div>
+  </div>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>Book an Appointment</h2>
+      <p class="hint">Choose a date and time. Past dates and already-taken slots are blocked automatically.</p>
+      <div id="bookMsg" class="msg"></div>
+
+      <form id="bookForm">
+        <div class="field">
+          <label for="patientName">Patient Name</label>
+          <input type="text" id="patientName" required>
+        </div>
+        <div class="field">
+          <label for="apptDate">Date</label>
+          <input type="date" id="apptDate" required>
+        </div>
+        <div class="field">
+          <label for="apptTime">Time</label>
+          <input type="time" id="apptTime" required>
+        </div>
+        <div class="field">
+          <label for="apptReason">Reason for Visit</label>
+          <textarea id="apptReason" required></textarea>
+        </div>
+        <button type="submit" class="btn" id="bookBtn">Book Appointment</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>My Appointments</h2>
+      <table>
+        <thead>
+          <tr><th>Patient</th><th>Date</th><th>Time</th><th>Reason</th></tr>
+        </thead>
+        <tbody id="myApptTableBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

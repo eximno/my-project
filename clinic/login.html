@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In — Delmoro Clinic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-header">
+    <div>
+      <h1>Delmoro Clinic</h1>
+      <div class="sub">Appointment System</div>
+    </div>
+    <div class="pulse-line"></div>
+  </div>
+
+  <div class="container">
+    <div class="login-wrap">
+      <div class="card">
+        <h2>Welcome back</h2>
+        <p class="hint">Log in to book or manage appointments.</p>
+
+        <div id="loginMsg" class="msg"></div>
+
+        <form id="loginForm">
+          <div class="field">
+            <label for="loginUsername">Username</label>
+            <input type="text" id="loginUsername" required autocomplete="username">
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn" id="loginBtn" style="width:100%;">Log In</button>
+        </form>
+
+        <p class="switch-link">Don't have an account? <a href="register.html">Register here</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

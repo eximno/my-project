@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Delmoro Clinic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-header">
+    <div>
+      <h1>Delmoro Clinic</h1>
+      <div class="sub">Appointment System</div>
+    </div>
+    <div class="pulse-line"></div>
+  </div>
+
+  <div class="container">
+    <div class="login-wrap">
+      <div class="card">
+        <h2>Create your account</h2>
+        <p class="hint">Register as a patient to start booking appointments.</p>
+
+        <div id="registerMsg" class="msg"></div>
+
+        <form id="registerForm">
+          <div class="field">
+            <label for="regUsername">Username</label>
+            <input type="text" id="regUsername" required autocomplete="username">
+          </div>
+          <div class="field">
+            <label for="regPassword">Password</label>
+            <input type="password" id="regPassword" required autocomplete="new-password">
+          </div>
+          <div class="field">
+            <label for="regConfirm">Confirm Password</label>
+            <input type="password" id="regConfirm" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="btn" id="registerBtn" style="width:100%;">Create Account</button>
+        </form>
+
+        <p class="switch-link">Already have an account? <a href="login.html">Log in</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

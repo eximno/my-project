@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Delmoro Clinic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-header">
+    <div>
+      <h1>Delmoro Clinic</h1>
+      <div class="sub">Admin Dashboard</div>
+    </div>
+    <div class="header-right">
+      <span class="badge" id="sessionBadge"></span>
+      <button class="link-btn" onclick="logout()">Log Out</button>
+    </div>
+    <div class="pulse-line"></div>
+  </div>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>All Appointments</h2>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Booked By</th><th>Patient</th><th>Date</th><th>Time</th><th>Reason</th><th></th></tr>
+        </thead>
+        <tbody id="adminApptTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Registered Users</h2>
+      <table>
+        <thead>
+          <tr><th>Username</th><th>Role</th></tr>
+        </thead>
+        <tbody id="adminUsersTableBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
