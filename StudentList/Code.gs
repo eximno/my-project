@@ -11,7 +11,6 @@ function getSheet() {
   return sheet;
 }
 
-// Make sure the header row exists
 function setupSheet() {
   const sheet = getSheet();
   if (sheet.getLastRow() === 0) {
@@ -19,8 +18,7 @@ function setupSheet() {
   }
 }
 
-// ---------- READ ----------
-// GET request -> returns all records as JSON
+
 function doGet(e) {
   setupSheet();
   const sheet = getSheet();
@@ -38,8 +36,7 @@ function doGet(e) {
   return jsonResponse({ status: 'success', data: records });
 }
 
-// ---------- CREATE / UPDATE / DELETE ----------
-// POST request -> action=create|update|delete
+
 function doPost(e) {
   setupSheet();
   const action = e.parameter.action;
@@ -95,7 +92,6 @@ function deleteRecord(id) {
   return jsonResponse({ status: 'error', message: 'Record not found.' });
 }
 
-// ---------- HELPER ----------
 function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
