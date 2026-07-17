@@ -6,7 +6,12 @@
   --ink: #1c2a33;
 }
 
+html {
+  height: 100%;
+}
+
 body {
+  height: 100%;
   background-color: var(--blue-pale);
   color: var(--ink);
   font-family: 'Inter', 'Segoe UI', sans-serif;
