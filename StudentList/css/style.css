@@ -17,6 +17,10 @@ body {
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
+main {
+  flex: 1 0 auto;
+}
+
 h1, h2, .app-header h1 {
   font-family: 'Poppins', 'Segoe UI', sans-serif;
 }
@@ -74,6 +78,7 @@ h1, h2, .app-header h1 {
 
 /* ---------- Footer ---------- */
 .app-footer {
+  flex-shrink: 0;
   text-align: center;
   padding: 1.25rem 0;
   color: var(--blue-deep);
